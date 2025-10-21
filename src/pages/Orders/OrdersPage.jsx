@@ -1,9 +1,12 @@
 import './OrdersPage.css';
 import Header from '../../components/Header.jsx';
+import { Link } from 'react-router';
+import BuyAgain from '../../assets/icons/buy-again.png';
 
 export default function OrdersPage() {
 	return (
 		<>
+			<link rel="icon" type="image/png" href="favicon/orders.png" />
 			<title>Orders</title>
 			<Header/>
 			<div className='orders-page'>
@@ -54,7 +57,7 @@ export default function OrdersPage() {
 								<button className='buy-again-button button-primary'>
 									<img
 										className='buy-again-icon'
-										src='images/icons/buy-again.png'
+										src={BuyAgain}
 									/>
 									<span className='buy-again-message'>
 										Add to Cart
@@ -63,11 +66,11 @@ export default function OrdersPage() {
 							</div>
 
 							<div className='product-actions'>
-								<a href='/tracking'>
+								<Link to='/tracking'>
 									<button className='track-package-button button-secondary'>
 										Track package
 									</button>
-								</a>
+								</Link>
 							</div>
 
 							<div className='product-image-container'>
@@ -87,7 +90,7 @@ export default function OrdersPage() {
 								<button className='buy-again-button button-primary'>
 									<img
 										className='buy-again-icon'
-										src='images/icons/buy-again.png'
+										src={BuyAgain}
 									/>
 									<span className='buy-again-message'>
 										Add to Cart
@@ -96,11 +99,11 @@ export default function OrdersPage() {
 							</div>
 
 							<div className='product-actions'>
-								<a href='/tracking'>
+								<Link to='/tracking'>
 									<button className='track-package-button button-secondary'>
 										Track package
 									</button>
-								</a>
+								</Link>
 							</div>
 						</div>
 					</div>
@@ -148,7 +151,7 @@ export default function OrdersPage() {
 								<button className='buy-again-button button-primary'>
 									<img
 										className='buy-again-icon'
-										src='images/icons/buy-again.png'
+										src={BuyAgain}
 									/>
 									<span className='buy-again-message'>
 										Add to Cart
@@ -157,11 +160,11 @@ export default function OrdersPage() {
 							</div>
 
 							<div className='product-actions'>
-								<a href='/tracking'>
+								<Link to='/tracking'>
 									<button className='track-package-button button-secondary'>
 										Track package
 									</button>
-								</a>
+								</Link>
 							</div>
 						</div>
 					</div>
