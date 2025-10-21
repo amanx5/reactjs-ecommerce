@@ -1,16 +1,16 @@
 import './HomePage.css';
 import Header from '../../components/Header.jsx';
-import Product from './Product.jsx';
+import {ProductHomeCard} from '../../components/Product.jsx';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { AppContext } from '../../contexts.js';
 
 export default function HomePage() {
 	const [products, setProducts] = useState([]);
-	const [cart, setCart] = useState([]);
+	const {cart, setCart} = useContext(AppContext);
 
 	useEffect(() => {
 		fetchProducts();
-		fetchCartItems();
 	}, []);
 
 	async function fetchProducts() {
@@ -21,13 +21,7 @@ export default function HomePage() {
 		}
 	}
 
-	async function fetchCartItems() {
-		const response = await axios.get('/api/cart-items');
-		const data = response.data;
-		if (data?.length) {
-			setCart(data);
-		}
-	}
+
 
 	return (
 		<>
@@ -37,7 +31,7 @@ export default function HomePage() {
 			<div className='home-page'>
 				<div className='products-grid'>
 					{products.map((product) => (
-						<Product key={product.id} product={product} />
+						<ProductHomeCard key={product.id} product={product} />
 					))}
 				</div>
 			</div>
