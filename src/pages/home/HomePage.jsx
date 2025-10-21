@@ -6,16 +6,26 @@ import { useEffect, useState } from 'react';
 
 export default function HomePage() {
 	const [products, setProducts] = useState([]);
+	const [cart, setCart] = useState([]);
 
 	useEffect(() => {
-		setData();
+		fetchProducts();
+		fetchCartItems();
 	}, []);
 
-	async function setData() {
-		const response = await axios.get('http://localhost:3000/api/products');
+	async function fetchProducts() {
+		const response = await axios.get('/api/products');
 		const data = response.data;
 		if (data?.length) {
 			setProducts(data);
+		}
+	}
+
+	async function fetchCartItems() {
+		const response = await axios.get('/api/cart-items');
+		const data = response.data;
+		if (data?.length) {
+			setCart(data);
 		}
 	}
 
@@ -23,7 +33,7 @@ export default function HomePage() {
 		<>
 			<link rel='icon' type='image/png' href='favicon/home.png' />
 			<title>Ecommerce</title>
-			<Header />
+			<Header cart={cart} />
 			<div className='home-page'>
 				<div className='products-grid'>
 					{products.map((product) => (

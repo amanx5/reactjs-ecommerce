@@ -7,7 +7,9 @@ import CartIcon  from '../assets/icons/cart-icon.png'
 
 import { NavLink } from 'react-router';
 
-export default function HomeHeader() {
+export default function Header({cart=[]}) {
+	let totalCartItems = cart.reduce((acc, curr) => acc += curr.quantity, 0);
+
 	return (
 		<div className='header'>
 			<div className='left-section'>
@@ -45,7 +47,7 @@ export default function HomeHeader() {
 						className='cart-icon'
 						src={CartIcon}
 					/>
-					<div className='cart-quantity'>3</div>
+					<div className='cart-quantity'>{totalCartItems}</div>
 					<div className='cart-text'>Cart</div>
 				</NavLink>
 			</div>

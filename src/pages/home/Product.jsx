@@ -1,5 +1,3 @@
-import PropTypes from 'prop-types';
-
 export default function Product({ product }) {
 	const { id, image, name, rating, priceCents, keywords } = product;
 	const { stars: ratingStars = 0, count: ratingCount = 0 } = rating || {};
@@ -60,17 +58,3 @@ export default function Product({ product }) {
 		keywords;
 	}
 }
-
-Product.propTypes = {
-	product: PropTypes.shape({
-		id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-		image: PropTypes.string,
-		name: PropTypes.string,
-		rating: PropTypes.shape({
-			stars: PropTypes.number,
-			count: PropTypes.number,
-		}),
-		priceCents: PropTypes.number,
-		keywords: PropTypes.arrayOf(PropTypes.string),
-	}),
-};
