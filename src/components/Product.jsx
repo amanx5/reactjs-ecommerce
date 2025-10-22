@@ -91,9 +91,10 @@ export const CartProduct = function ({ cartProduct }) {
 	);
 };
 
-export const OrderProduct = function ({ orderProduct }) {
+export const OrderProduct = function ({ order, orderProduct }) {
+	const { id: orderId } = order;
 	const { product, quantity, estimatedDeliveryTimeMs } = orderProduct;
-	const { name, image } = product;
+	const { id: productId, name, image } = product;
 	return (
 		<>
 			<div className='product-image-container'>
@@ -113,7 +114,9 @@ export const OrderProduct = function ({ orderProduct }) {
 			</div>
 
 			<div className='product-actions'>
-				<Link to='/tracking'>
+				<Link to={`/tracking?orderId=${orderId}&productId=${productId}`}
+					state={{order}} // optimisation
+				>
 					<button className='track-package-button button-secondary'>
 						Track package
 					</button>

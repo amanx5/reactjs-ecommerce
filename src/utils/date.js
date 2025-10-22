@@ -1,15 +1,19 @@
 export const addDaysToDate = function (date, days) {
-	const newDate = date ? new Date(date) : new Date();
-	return newDate.setDate(newDate.getDate() + days);
+	if (date) {
+		const newDate = new Date(date);
+		return newDate.setDate(newDate.getDate() + days);
+	}
 };
 
 export const formatDate = function (date, formatOptions) {
-	const newDate  = date ? new Date(date) : new Date();
-	formatOptions ??= {
-		weekday: 'short',
-		day: '2-digit',
-		month: 'short',
-	};
-
-	return newDate.toLocaleDateString('en-US', formatOptions);
+	if (date) {
+		const newDate  = new Date(date);
+		formatOptions ??= {
+			weekday: 'short',
+			day: '2-digit',
+			month: 'short',
+		};
+	
+		return newDate.toLocaleDateString('en-US', formatOptions);
+	}
 };

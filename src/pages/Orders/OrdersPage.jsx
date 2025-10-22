@@ -7,13 +7,9 @@ import { setStateFromAPIResponse } from '@/utils';
 export default function OrdersPage() {
 	const [orders, setOrders] = useState([]);
 	useEffect(() => {
-		fetchOrders();
-	}, []);
-
-	async function fetchOrders() {
 		const api = '/api/orders?expand=products';
 		setStateFromAPIResponse(api, setOrders);
-	}
+	}, []);
 
 	return (
 		<>

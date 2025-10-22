@@ -3,7 +3,14 @@ import { NavLink } from 'react-router';
 import LogoGreen from '../../assets/logo/logo.png'
 import MobileLogoGreen from '../../assets/logo/mobile-logo.png'
 import CheckoutLock from '../../assets/icons/Checkout-lock-icon.png'
+import { useContext } from 'react';
+import AppContext from '@/context/AppContext';
+import { getTotalCartItems } from '@/utils';
+
 export default function CheckoutHeader() {
+	const {cart, setCart} = useContext(AppContext);
+	const totalCartItems = getTotalCartItems(cart);
+
 	return (
 		<div className="checkout-header">
 			<div className='header-content'>
@@ -17,7 +24,7 @@ export default function CheckoutHeader() {
 				<div className='checkout-header-middle-section'>
 					Checkout (
 					<NavLink className='return-to-home-link' to='/'>
-						3 items
+						{totalCartItems + ' items'} 
 					</NavLink>
 					)
 				</div>
