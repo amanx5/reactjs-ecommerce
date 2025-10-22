@@ -2,7 +2,7 @@ import './OrdersPage.css';
 import Header from '@/components/Header.jsx';
 import Order from './components/Order.jsx';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { setStateFromAPIResponse } from '@/utils';
 
 export default function OrdersPage() {
 	const [orders, setOrders] = useState([]);
@@ -11,11 +11,8 @@ export default function OrdersPage() {
 	}, []);
 
 	async function fetchOrders() {
-		const response = await axios.get('/api/orders?expand=products');
-		if (response.data) {
-			console.log('fetched orders: ', response.data);
-			setOrders(response.data);
-		}
+		const api = '/api/orders?expand=products';
+		setStateFromAPIResponse(api, setOrders);
 	}
 
 	return (

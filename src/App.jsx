@@ -7,23 +7,16 @@ import TrackingPage from './pages/tracking/TrackingPage';
 import NotFoundPage from './pages/notfound/NotFoundPage';
 import AppContext from '@/context/AppContext';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { setStateFromAPIResponse } from './utils';
 
 function App() {
 	const [cart, setCart] = useState([]);
 
 	useEffect(() => {
-		fetchCartItems();
+		const api = '/api/cart-items?expand=product';
+		setStateFromAPIResponse(api, setCart);
 	}, []);
 
-
-	async function fetchCartItems() {
-		const response = await axios.get('/api/cart-items?expand=product');
-		const data = response.data;
-		if (data?.length) {
-			setCart(data);
-		}
-	}
 	return (
 		<AppContext.Provider value={{cart, setCart}}>
 			<Routes>

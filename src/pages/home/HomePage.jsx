@@ -1,25 +1,16 @@
 import './HomePage.css';
 import Header from '../../components/Header.jsx';
 import {HomeProduct} from '@/components/Product.jsx';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { setStateFromAPIResponse } from '@/utils';
 
 export default function HomePage() {
 	const [products, setProducts] = useState([]);
 
 	useEffect(() => {
-		fetchProducts();
+		const api = '/api/products';
+		setStateFromAPIResponse(api, setProducts);	
 	}, []);
-
-	async function fetchProducts() {
-		const response = await axios.get('/api/products');
-		const data = response.data;
-		if (data?.length) {
-			setProducts(data);
-		}
-	}
-
-
 
 	return (
 		<>

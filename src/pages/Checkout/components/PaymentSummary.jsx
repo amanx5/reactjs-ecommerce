@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getTotalCartItems } from '@/utils';
-import axios from 'axios';
+import { getTotalCartItems, setStateFromAPIResponse } from '@/utils';
 import { getPriceNative } from '@/utils';
 
 
@@ -9,15 +8,9 @@ export default function PaymentSummary({ cart }) {
 	const [paymentSummary, setPaymentSummary] = useState(null);
 
 	useEffect(() => {
-		fetchPaymentSummary();
+		const api = '/api/payment-summary';
+		setStateFromAPIResponse(api, setPaymentSummary);
 	}, []);
-
-	async function fetchPaymentSummary() {
-		const response = await axios.get('/api/payment-summary');
-		if (response.data) {
-			setPaymentSummary(response.data);
-		}
-	}
 
 	const {
 		totalItems,
