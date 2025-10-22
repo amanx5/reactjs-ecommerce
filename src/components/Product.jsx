@@ -1,7 +1,8 @@
+import { formatDate, getPriceNative } from '@/utils';
+import { Link } from 'react-router';
+import BuyAgain from '@/assets/icons/buy-again.png';
 
-import { getPriceNative } from '@/utils';
-
-export const ProductHomeCard = function ({ product }) {
+export const HomeProduct = function ({ product }) {
 	const { id, image, name, rating, priceCents, keywords } = product || {};
 	const { stars: ratingStars = 0, count: ratingCount = 0 } = rating;
 
@@ -55,11 +56,13 @@ export const ProductHomeCard = function ({ product }) {
 			</button>
 		</div>
 	);
+
+	function addToCartOnClick() {}
 };
 
-export const ProductCartItem = function ({ cartItem }) {
+export const CartProduct = function ({ cartProduct }) {
 	const { product, quantity, deliveryOptionId, createdAt, updatedAt } =
-		cartItem || {};
+		cartProduct || {};
 	const { id, image, name, rating, priceCents, keywords } = product;
 
 	return (
@@ -68,7 +71,9 @@ export const ProductCartItem = function ({ cartItem }) {
 
 			<div className='cart-item-details'>
 				<div className='product-name'>{name}</div>
-				<div className='product-price'>{getPriceNative(priceCents)}</div>
+				<div className='product-price'>
+					{getPriceNative(priceCents)}
+				</div>
 				<div className='product-quantity'>
 					<span>
 						Quantity:{' '}
@@ -86,5 +91,34 @@ export const ProductCartItem = function ({ cartItem }) {
 	);
 };
 
+export const OrderProduct = function ({ orderProduct }) {
+	const { product, quantity, estimatedDeliveryTimeMs } = orderProduct;
+	const { name, image } = product;
+	return (
+		<>
+			<div className='product-image-container'>
+				<img src={image} />
+			</div>
 
-function addToCartOnClick() {}
+			<div className='product-details'>
+				<div className='product-name'>{name}</div>
+				<div className='product-delivery-date'>
+					{'Arriving on: ' + formatDate(estimatedDeliveryTimeMs)}
+				</div>
+				<div className='product-quantity'>Quantity: {quantity}</div>
+				<button className='buy-again-button button-primary'>
+					<img className='buy-again-icon' src={BuyAgain} />
+					<span className='buy-again-message'>Add to Cart</span>
+				</button>
+			</div>
+
+			<div className='product-actions'>
+				<Link to='/tracking'>
+					<button className='track-package-button button-secondary'>
+						Track package
+					</button>
+				</Link>
+			</div>
+		</>
+	);
+};

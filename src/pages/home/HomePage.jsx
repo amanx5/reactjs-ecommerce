@@ -1,6 +1,6 @@
 import './HomePage.css';
 import Header from '../../components/Header.jsx';
-import {ProductHomeCard} from '../../components/Product.jsx';
+import {HomeProduct} from '@/components/Product.jsx';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
@@ -29,7 +29,7 @@ export default function HomePage() {
 			<div className='home-page'>
 				<div className='products-grid'>
 					{products.map((product) => (
-						<ProductHomeCard key={product.id} product={product} />
+						<HomeProduct key={product.id} product={product} />
 					))}
 				</div>
 			</div>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {ProductCartItem} from "@/components/Product";
+import {CartProduct} from "@/components/Product";
 import DeliveryOptions from "./DeliveryOptions";
 import axios from "axios";
 import { formatDate } from '@/utils';
@@ -31,7 +31,7 @@ export default function CartItem({cartItem}) {
 			</div>
 
 			<div className='cart-item-details-grid'>
-				<ProductCartItem cartItem={cartItem}/>
+				<CartProduct cartProduct={cartItem}/>
 				<DeliveryOptions cartItem={cartItem} deliveryOptions={deliveryOptions}/>
 			</div>
 		</div>
