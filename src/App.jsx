@@ -5,7 +5,7 @@ import CheckoutPage from './pages/checkout/CheckoutPage';
 import OrdersPage from './pages/orders/OrdersPage';
 import TrackingPage from './pages/tracking/TrackingPage';
 import NotFoundPage from './pages/notfound/NotFoundPage';
-import { AppContext } from './contexts';
+import AppContext from '@/context/AppContext';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 

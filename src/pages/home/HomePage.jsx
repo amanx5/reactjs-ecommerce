@@ -2,12 +2,10 @@ import './HomePage.css';
 import Header from '../../components/Header.jsx';
 import {ProductHomeCard} from '../../components/Product.jsx';
 import axios from 'axios';
-import { useContext, useEffect, useState } from 'react';
-import { AppContext } from '../../contexts.js';
+import { useEffect, useState } from 'react';
 
 export default function HomePage() {
 	const [products, setProducts] = useState([]);
-	const {cart, setCart} = useContext(AppContext);
 
 	useEffect(() => {
 		fetchProducts();
@@ -27,7 +25,7 @@ export default function HomePage() {
 		<>
 			<link rel='icon' type='image/png' href='favicon/home.png' />
 			<title>Ecommerce</title>
-			<Header cart={cart} />
+			<Header/>
 			<div className='home-page'>
 				<div className='products-grid'>
 					{products.map((product) => (

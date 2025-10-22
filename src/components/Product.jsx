@@ -1,7 +1,9 @@
-export const ProductHomeCard = function ({ product = {} }) {
-	const { id, image, name, rating, priceCents, keywords } = product;
+
+import { getPriceNative } from '@/utils';
+
+export const ProductHomeCard = function ({ product }) {
+	const { id, image, name, rating, priceCents, keywords } = product || {};
 	const { stars: ratingStars = 0, count: ratingCount = 0 } = rating;
-	const priceNative = getPriceNative(priceCents, 'USD');
 
 	return (
 		<div className='product-container'>
@@ -21,7 +23,7 @@ export const ProductHomeCard = function ({ product = {} }) {
 				</div>
 			</div>
 
-			<div className='product-price'>{priceNative}</div>
+			<div className='product-price'>{getPriceNative(priceCents)}</div>
 
 			<div className='product-quantity-container'>
 				<select>
@@ -55,11 +57,10 @@ export const ProductHomeCard = function ({ product = {} }) {
 	);
 };
 
-export const ProductCartItem = function ({ cartItem = {} }) {
+export const ProductCartItem = function ({ cartItem }) {
 	const { product, quantity, deliveryOptionId, createdAt, updatedAt } =
 		cartItem || {};
 	const { id, image, name, rating, priceCents, keywords } = product;
-	const priceNative = getPriceNative(priceCents, 'USD');
 
 	return (
 		<>
@@ -67,7 +68,7 @@ export const ProductCartItem = function ({ cartItem = {} }) {
 
 			<div className='cart-item-details'>
 				<div className='product-name'>{name}</div>
-				<div className='product-price'>{priceNative}</div>
+				<div className='product-price'>{getPriceNative(priceCents)}</div>
 				<div className='product-quantity'>
 					<span>
 						Quantity:{' '}
@@ -85,9 +86,5 @@ export const ProductCartItem = function ({ cartItem = {} }) {
 	);
 };
 
-
-function getPriceNative(price, currency) {
-	return (price / 100).toFixed(2);
-}
 
 function addToCartOnClick() {}
