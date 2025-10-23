@@ -1,7 +1,7 @@
 import './HomePage.css';
 import { useEffect, useState } from 'react';
 import Header from '@/components/Header.jsx';
-import { HomeProduct } from '@/components/Product.jsx';
+import Product from './components/Product.jsx';
 import { setStateFromAPIResponse } from '@/utils';
 
 export default function HomePage() {
@@ -22,7 +22,7 @@ export default function HomePage() {
 			<div className='home-page'>
 				<div className='products-grid'>
 					{products.map((product) => (
-						<HomeProduct key={product.id} product={product} />
+						<Product key={product.id} product={product} />
 					))}
 				</div>
 			</div>

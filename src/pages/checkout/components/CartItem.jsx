@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { CartProduct } from '@/components/Product';
+import Product from './Product';
 import DeliveryOptions from './DeliveryOptions';
 import { formatDate, setStateFromAPIResponse } from '@/utils';
 
@@ -17,7 +17,7 @@ export default function CartItem({ cartItem }) {
 				deliveryOptions={deliveryOptions}
 			/>
 			<div className='cart-item-details-grid'>
-				<CartProduct cartProduct={cartItem} />
+				<Product cartProduct={cartItem} />
 				<DeliveryOptions
 					cartItem={cartItem}
 					deliveryOptions={deliveryOptions}
@@ -29,13 +29,13 @@ export default function CartItem({ cartItem }) {
 
 function DeliveryDate({ cartItem, deliveryOptions }) {
 	const selectedDeliveryOption = deliveryOptions.find(
-		({ id }) => id === cartItem?.deliveryOptionId
+		(deliveryOption) => deliveryOption?.id === cartItem?.deliveryOptionId
 	);
-
 	const { estimatedDeliveryTimeMs } = selectedDeliveryOption || {};
+	
 	return (
 		<div className='delivery-date'>
-			Delivery date: {formatDate(new Date(estimatedDeliveryTimeMs))}
+			Delivery date: {formatDate(estimatedDeliveryTimeMs)}
 		</div>
 	);
 }

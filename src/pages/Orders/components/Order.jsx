@@ -1,4 +1,4 @@
-import { OrderProduct } from '@/components/Product';
+import { Product } from './Product';
 import { formatDate, getPriceNative } from '@/utils';
 
 export default function Order({ order }) {
@@ -10,7 +10,7 @@ export default function Order({ order }) {
 				<OrderHeader order={order} />
 				<div className='order-details-grid'>
 					{orderProducts.map((orderProduct) => (
-						<OrderProduct
+						<Product
 							order={order}
 							key={orderProduct.productId}
 							orderProduct={orderProduct}
