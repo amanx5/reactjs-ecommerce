@@ -33,7 +33,7 @@ export default function CheckoutPage() {
 	);
 
 	function refreshPaymentSummary() {
-		const api = '/api/payment-summary';
+		const api = 'payment-summary';
 		setStateFromAPIResponse(api, setPaymentSummary);
 	}
 }

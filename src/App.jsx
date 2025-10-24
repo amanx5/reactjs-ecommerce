@@ -29,7 +29,7 @@ export default function App() {
 	);
 
 	function refreshCart() {
-		const api = '/api/cart-items?expand=product';
+		const api = 'cart-items?expand=product';
 		setStateFromAPIResponse(api, setCart);
 	}
 }

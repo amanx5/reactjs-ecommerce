@@ -9,7 +9,7 @@ export default function CartItem({ cartItem }) {
 	const [deliveryOptions, setDeliveryOptions] = useState([]);
 
 	useEffect(() => {
-		const api = '/api/delivery-options?expand=estimatedDeliveryTime';
+		const api = 'delivery-options?expand=estimatedDeliveryTime';
 		setStateFromAPIResponse(api, setDeliveryOptions);
 	}, []);
 

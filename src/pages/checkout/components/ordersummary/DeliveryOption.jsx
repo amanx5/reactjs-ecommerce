@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { apiRequest, formatDate, getPriceNative } from '@/utils';
+import { apiRequest, formatDate, getPriceNative, updateDeliveryOption } from '@/utils';
 import AppContext from '@/context/AppContext';
 import CheckoutContext from '@/context/CheckoutContext';
 import CartItemContext from "@/context/CartItemContext";
@@ -41,16 +41,3 @@ export default function DeliveryOption({deliveryOption}) {
         }
     }
 }
-
-async function updateDeliveryOption(deliveryOptionId, productId) {
-    const data = {
-        deliveryOptionId,
-    };
-
-    const result = await apiRequest(`cart-items/${productId}`, data, 'put');
-
-    if (result.success) {
-        return true;
-    }
-}
-

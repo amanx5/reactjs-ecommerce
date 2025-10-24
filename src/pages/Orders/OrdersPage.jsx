@@ -7,7 +7,7 @@ import { setStateFromAPIResponse } from '@/utils';
 export default function OrdersPage() {
 	const [orders, setOrders] = useState([]);
 	useEffect(() => {
-		const api = '/api/orders?expand=products';
+		const api = 'orders?expand=products';
 		setStateFromAPIResponse(api, setOrders);
 	}, []);
 

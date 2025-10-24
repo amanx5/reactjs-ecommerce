@@ -8,7 +8,7 @@ export default function HomePage() {
 	const [products, setProducts] = useState([]);
 
 	useEffect(() => {
-		const api = '/api/products';
+		const api = 'products';
 		setStateFromAPIResponse(api, setProducts);
 	}, []);
 

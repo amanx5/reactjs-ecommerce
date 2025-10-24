@@ -1,32 +1,26 @@
 import axios from 'axios';
 
-export const setStateFromAPIResponse = async function (api, setter) {
-	if (api && setter) {
-		try {
-			const response = await axios.get(api);
-			console.log(api, ' => ', response.data);
-			const data = response.data;
-
-			if (data) {
-				setter(data);
-			}
-		} catch (error) {
-			console.error(error);
-		}
-	}
-};
-
-export const addNewCartItem = async function (data) {
-	const result = await apiRequest('cart-items', data, 'post');
-
-	if (result.success) {
-		return true;
-	}
-};
-
+/**
+ * Makes an HTTP request to the given API endpoint using Axios.
+ *
+ * @param {string} api - The API endpoint (relative to '/api/'). Required.
+ * @param {Object|null} [data=null] - The request payload. Optional for GET and DELETE requests.
+ * @param {'get'|'post'|'put'|'delete'} [method='get'] - HTTP method to use.
+ * @returns {Promise<{ data: any, error: any, success: boolean }>}
+ *          A promise that resolves to an object containing the response data,
+ *          an error (if any occurred), and a success flag.
+ *
+ * @example
+ * const { success, data, error } = await apiRequest('cart-items', { productId: 'abc', quantity: 2 }, 'post');
+ */
 export const apiRequest = async function (api, data, method = 'get') {
+	const result = { success: null, data: null, error: null };
+	if (!api) {
+		console.warn('Request not sent. [api param is missing]');
+		return result;
+	}
+
 	const url = '/api/' + api;
-	const result = { data: null, error: null, success: false };
 
 	try {
 		let response;
@@ -45,7 +39,20 @@ export const apiRequest = async function (api, data, method = 'get') {
 	} catch (error) {
 		console.error(error);
 		result.error = error;
+		result.success = false;
 	}
 
 	return result;
-}
+};
+
+export const setStateFromAPIResponse = async function (api, setter) {
+	if (!setter) {
+		console.warn('Request not sent. [Setter param is missing]');
+		return;
+	}
+
+	const { success, data } = await apiRequest(api);
+	if (success) {
+		setter(data);
+	}
+};

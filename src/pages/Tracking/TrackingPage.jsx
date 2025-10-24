@@ -19,7 +19,7 @@ export default function TrackingPage() {
 		// page was not opened from Track Package button
 		// or page was opened from Track Package but later search params are changed
 		if (!isIntervalNavigation) {
-			const api = `/api/orders/${orderId}?expand=products`;
+			const api = `orders/${orderId}?expand=products`;
 			setStateFromAPIResponse(api, setOrder);
 		}
 	}, [orderId, isIntervalNavigation]);
