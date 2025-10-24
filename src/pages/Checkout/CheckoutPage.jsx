@@ -1,12 +1,17 @@
 import './CheckoutPage.css';
-import CheckoutContext from '@/context/CheckoutContext';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { checkIsCartEmpty, setStateFromAPIResponse } from '@/utils';
 import CheckoutHeader from './CheckoutHeader';
 import PaymentSummary from './components/PaymentSummary';
-import { setStateFromAPIResponse } from '@/utils';
 import OrderSummary from './components/OrderSummary';
+import AppContext from '@/context/AppContext';
+import CheckoutContext from '@/context/CheckoutContext';
 
 export default function CheckoutPage() {
+	const { cart } = useContext(AppContext);
+	const isCartEmpty = checkIsCartEmpty(cart);
+	const pageTitle = isCartEmpty ? 'No items in cart' : 'Review your order';
+
 	const [paymentSummary, setPaymentSummary] = useState(null);
 
 	useEffect(() => {
@@ -22,12 +27,16 @@ export default function CheckoutPage() {
 			<CheckoutHeader />
 
 			<div className='checkout-page'>
-				<div className='page-title'>Review your order</div>
+				<div className='page-title'>{pageTitle}</div>
 
-				<div className='checkout-grid'>
-					<OrderSummary />
-					<PaymentSummary />
-				</div>
+				{isCartEmpty ? (
+					<div> Add some items in the cart. </div>
+				) : (
+					<div className='checkout-grid'>
+						<OrderSummary />
+						<PaymentSummary />
+					</div>
+				)}
 			</div>
 		</CheckoutContext.Provider>
 	);

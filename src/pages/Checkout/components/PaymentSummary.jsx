@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { getPriceNative } from '@/utils';
 import CheckoutContext from '@/context/CheckoutContext';
+import PlaceYourOrder from './paymentsummary/PlaceYourOrder';
 
 export default function PaymentSummary() {
 	const { paymentSummary } = useContext(CheckoutContext);
@@ -53,9 +54,7 @@ export default function PaymentSummary() {
 				</div>
 			</div>
 
-			<button className='place-order-button button-primary'>
-				Place your order
-			</button>
+			<PlaceYourOrder />
 		</div>
 	);
 }
