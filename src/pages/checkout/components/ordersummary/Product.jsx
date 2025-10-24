@@ -1,8 +1,11 @@
-import { getPriceNative } from "@/utils";
+import { getPriceNative } from '@/utils';
+import { useContext } from 'react';
+import CartItemContext from '@/context/CartItemContext';
 
-export default function CartProduct ({ cartProduct }) {
+export default function Product() {
+	const { cartItem } = useContext(CartItemContext);
 	const { product, quantity, deliveryOptionId, createdAt, updatedAt } =
-		cartProduct || {};
+		cartItem || {};
 	const { id, image, name, rating, priceCents, keywords } = product;
 
 	return (
@@ -29,4 +32,4 @@ export default function CartProduct ({ cartProduct }) {
 			</div>
 		</>
 	);
-};
+}

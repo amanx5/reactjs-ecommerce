@@ -1,15 +1,22 @@
 import './CheckoutPage.css';
-import AppContext from '@/context/AppContext';
-import { useContext } from 'react';
+import CheckoutContext from '@/context/CheckoutContext';
+import { useEffect, useState } from 'react';
 import CheckoutHeader from './CheckoutHeader';
-import CartItem from './components/CartItem';
 import PaymentSummary from './components/PaymentSummary';
+import { setStateFromAPIResponse } from '@/utils';
+import OrderSummary from './components/OrderSummary';
 
 export default function CheckoutPage() {
-	const { cart, setCart } = useContext(AppContext);
+	const [paymentSummary, setPaymentSummary] = useState(null);
+
+	useEffect(() => {
+		refreshPaymentSummary();
+	}, []);
 
 	return (
-		<>
+		<CheckoutContext.Provider
+			value={{ paymentSummary, setPaymentSummary, refreshPaymentSummary }}
+		>
 			<link rel='icon' type='image/png' href='favicon/cart.png' />
 			<title>Checkout</title>
 			<CheckoutHeader />
@@ -18,14 +25,15 @@ export default function CheckoutPage() {
 				<div className='page-title'>Review your order</div>
 
 				<div className='checkout-grid'>
-					<div className='order-summary'>
-						{cart.map((cartItem) => (
-							<CartItem key={cartItem.id} cartItem={cartItem} />
-						))}
-					</div>
-					<PaymentSummary cart={cart}/>
+					<OrderSummary />
+					<PaymentSummary />
 				</div>
 			</div>
-		</>
+		</CheckoutContext.Provider>
 	);
+
+	function refreshPaymentSummary() {
+		const api = '/api/payment-summary';
+		setStateFromAPIResponse(api, setPaymentSummary);
+	}
 }

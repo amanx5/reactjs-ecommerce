@@ -1,4 +1,4 @@
-import { Product } from './Product';
+import Product from './Product';
 import { formatDate, getPriceNative } from '@/utils';
 
 export default function Order({ order }) {

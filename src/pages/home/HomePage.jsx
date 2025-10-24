@@ -1,7 +1,7 @@
 import './HomePage.css';
 import { useEffect, useState } from 'react';
 import Header from '@/components/Header.jsx';
-import Product from './components/Product.jsx';
+import Product from './components/product/Product.jsx';
 import { setStateFromAPIResponse } from '@/utils';
 
 export default function HomePage() {
