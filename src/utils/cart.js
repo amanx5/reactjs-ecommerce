@@ -1,11 +1,25 @@
 import { apiRequest } from './utility';
 
-export const checkIsCartEmpty = function (cart) {
-	return cart.length === 0;
+export const getCheckoutHeading = function (cart) {
+	if (cart === null) {
+		return 'Loading...';
+	} else if (Array.isArray(cart)) {
+		if (cart.length) {
+			return 'Review your order';
+		} else {
+			return 'Cart is Empty!';
+		}
+	} else {
+		return 'Failed to load cart.';
+	}
 }
 
 export const getTotalCartItems = function (cart) {
-	return cart.reduce((acc, curr) => (acc += curr.quantity), 0);
+	if ((Array.isArray(cart))) {
+		return cart.reduce((acc, curr) => (acc += curr.quantity), 0);
+	} else {
+		return 0;
+	}
 };
 
 export const addNewCartItem = async function (data) {

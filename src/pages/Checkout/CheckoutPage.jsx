@@ -1,6 +1,6 @@
 import './CheckoutPage.css';
 import { useContext, useEffect, useState } from 'react';
-import { checkIsCartEmpty, setStateFromAPIResponse } from '@/utils';
+import { getCheckoutHeading, setStateFromAPIResponse } from '@/utils';
 import CheckoutHeader from './CheckoutHeader';
 import PaymentSummary from './components/PaymentSummary';
 import OrderSummary from './components/OrderSummary';
@@ -9,9 +9,7 @@ import CheckoutContext from '@/context/CheckoutContext';
 
 export default function CheckoutPage() {
 	const { cart } = useContext(AppContext);
-	const isCartEmpty = checkIsCartEmpty(cart);
-	const pageTitle = isCartEmpty ? 'No items in cart' : 'Review your order';
-
+	const pageTitle = getCheckoutHeading(cart);
 	const [paymentSummary, setPaymentSummary] = useState(null);
 
 	useEffect(() => {
@@ -29,12 +27,14 @@ export default function CheckoutPage() {
 			<div className='checkout-page'>
 				<div className='page-title'>{pageTitle}</div>
 
-				{isCartEmpty ? (
-					<div> Add some items in the cart. </div>
-				) : (
+				{cart?.length ? (
 					<div className='checkout-grid'>
 						<OrderSummary />
 						<PaymentSummary />
+					</div>
+				) : (
+					<div>
+						{cart === null ? '' : 'Add some items in the cart.'}
 					</div>
 				)}
 			</div>
