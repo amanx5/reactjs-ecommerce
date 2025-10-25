@@ -1,4 +1,4 @@
-import { formatDate, getDeliveryDateHeading, getProgress } from "@/utils";
+import { formatDate, getDeliveryDateHeading, getTrackingProgress } from "@/utils";
 import ProductDetails from "./ProductDetails";
 
 export default function TrackingDetails({ order, productId }) {
@@ -6,8 +6,7 @@ export default function TrackingDetails({ order, productId }) {
     const orderProduct = orderProducts.find(
         (orderProduct) => orderProduct.productId === productId
     );
-
-	const progress = getProgress(order, productId);
+	const progress = getTrackingProgress(order, orderProduct);
 
     return (
         <>

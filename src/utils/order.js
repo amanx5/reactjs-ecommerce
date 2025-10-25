@@ -1,14 +1,14 @@
 import { formatDate } from './date';
 
-export const getProgress = function (order, orderProduct) {
+export const getTrackingProgress = function (order, orderProduct) {
 	const { orderTimeMs } = order;
 	const { estimatedDeliveryTimeMs } = orderProduct;
 	const totalDeliveryTimeMs = Math.max(
 		estimatedDeliveryTimeMs - orderTimeMs,
 		1 // ensuring totalDeliveryTimeMs is atleast 1ms for cases when (estimatedDeliveryTimeMs - orderTimeMs == 0)
 	);
-	const timePassedMs = Date.now() - totalDeliveryTimeMs;
-	const progress = Math.max((timePassedMs / totalDeliveryTimeMs) * 100, 100);
+	const timePassedMs = Date.now() - orderTimeMs;
+	const progress = Math.min(100, (timePassedMs / totalDeliveryTimeMs) * 100);
 
 	return progress;
 };

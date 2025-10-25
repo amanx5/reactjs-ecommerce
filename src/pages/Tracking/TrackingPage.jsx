@@ -2,7 +2,7 @@ import './TrackingPage.css';
 import Header from '@/components/Header.jsx';
 import { setStateFromAPIResponse } from '@/utils';
 import { useEffect, useState } from 'react';
-import { Link, useLocation, useSearchParams } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import TrackingDetails from './components/TrackingDetails';
 
 export default function TrackingPage() {

@@ -10,7 +10,7 @@ import { Routes, Route } from 'react-router';
 import { setStateFromAPIResponse } from '@/utils';
 
 export default function App() {
-	const [cart, setCart] = useState([]);
+	const [cart, setCart] = useState(null);
 
 	useEffect(() => {
 		refreshCart();
