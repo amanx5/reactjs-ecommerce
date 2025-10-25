@@ -6,23 +6,15 @@ import { Link, useLocation, useSearchParams } from 'react-router';
 import TrackingDetails from './components/TrackingDetails';
 
 export default function TrackingPage() {
-	const { state: linkState } = useLocation();
-	const isIntervalNavigation = !!linkState?.order;
-	const orderInitialValue = linkState?.order || null;
-	const [order, setOrder] = useState(orderInitialValue);
-
+	const [order, setOrder] = useState(null);
 	const [searchParams] = useSearchParams();
 	const orderId = searchParams.get('orderId');
 	const productId = searchParams.get('productId');
 
 	useEffect(() => {
-		// page was not opened from Track Package button
-		// or page was opened from Track Package but later search params are changed
-		if (!isIntervalNavigation) {
-			const api = `orders/${orderId}?expand=products`;
-			setStateFromAPIResponse(api, setOrder);
-		}
-	}, [orderId, isIntervalNavigation]);
+		const api = `orders/${orderId}?expand=products`;
+		setStateFromAPIResponse(api, setOrder);
+	}, [orderId]);
 
 	return (
 		<>

@@ -16,10 +16,6 @@ export default function Actions({ order, productId }) {
 	);
 
 	function trackPackageOnClick(event) {
-		const to = `/tracking?orderId=${orderId}&productId=${productId}`;
-        const options = {
-            state: { order }
-        }
-		navigate(to, options);
+		navigate(`/tracking?orderId=${orderId}&productId=${productId}`);
 	}
 }
