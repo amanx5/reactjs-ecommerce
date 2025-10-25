@@ -1,19 +1,13 @@
-import { formatDate } from "@/utils";
+import { formatDate, getDeliveryDateHeading, getProgress } from "@/utils";
 import ProductDetails from "./ProductDetails";
 
 export default function TrackingDetails({ order, productId }) {
-    const { orderTimeMs, products: orderProducts = [] } = order;
+    const { products: orderProducts = [] } = order;
     const orderProduct = orderProducts.find(
         (orderProduct) => orderProduct.productId === productId
     );
 
-    const { estimatedDeliveryTimeMs } = orderProduct;
-    const totalDeliveryTimeMs = Math.max(
-        estimatedDeliveryTimeMs - orderTimeMs,
-        1 // ensuring totalDeliveryTimeMs is atleast 1ms for cases when (estimatedDeliveryTimeMs - orderTimeMs == 0)
-    );
-    const timePassedMs = Date.now() - totalDeliveryTimeMs;
-    const progress = Math.max((timePassedMs / totalDeliveryTimeMs) * 100, 100);
+	const progress = getProgress(order, productId);
 
     return (
         <>
@@ -26,9 +20,7 @@ export default function TrackingDetails({ order, productId }) {
 }
 
 function ProgressHeading({ orderProduct, progress }) {
-	const { estimatedDeliveryTimeMs } = orderProduct;
-	const statusText = progress >= 100 ? 'Delivered on' : 'Arriving on';
-	const heading = statusText + ' ' + formatDate(estimatedDeliveryTimeMs);
+	const heading = getDeliveryDateHeading(orderProduct, progress);
 
 	return <div className='delivery-date'>{heading}</div>;
 }
