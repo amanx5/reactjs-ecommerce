@@ -1,11 +1,12 @@
 import { formatDate } from '@/utils';
 import { Link } from 'react-router';
 import BuyAgain from '@/assets/icons/buy-again.png';
+import Actions from './Actions';
 
 export default function Product ({ order, orderProduct }) {
-	const { id: orderId } = order;
 	const { product, quantity, estimatedDeliveryTimeMs } = orderProduct;
 	const { id: productId, name, image } = product;
+	
 	return (
 		<>
 			<div className='product-image-container'>
@@ -24,15 +25,7 @@ export default function Product ({ order, orderProduct }) {
 				</button>
 			</div>
 
-			<div className='product-actions'>
-				<Link to={`/tracking?orderId=${orderId}&productId=${productId}`}
-					state={{order}} // optimisation
-				>
-					<button className='track-package-button button-secondary'>
-						Track package
-					</button>
-				</Link>
-			</div>
+			<Actions order={order} productId={productId} />
 		</>
 	);
 };
