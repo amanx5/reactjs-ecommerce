@@ -1,14 +1,19 @@
 import { useContext } from 'react';
-import { apiRequest, formatDate, getPriceNative, updateDeliveryOption } from '@/utils';
+import {
+	formatDate,
+	getPriceNative,
+	refreshStateViaAPI,
+	updateDeliveryOption,
+} from '@/utils';
 import AppContext from '@/context/AppContext';
 import CheckoutContext from '@/context/CheckoutContext';
-import CartItemContext from "@/context/CartItemContext";
+import CartItemContext from '@/context/CartItemContext';
 
-export default function DeliveryOption({deliveryOption}) {
-    const { refreshCart } = useContext(AppContext);
-	const { refreshPaymentSummary } = useContext(CheckoutContext);
+export default function DeliveryOption({ deliveryOption }) {
+	const { setCart, setError } = useContext(AppContext);
+	const { setPaymentSummary } = useContext(CheckoutContext);
 	const { cartItem } = useContext(CartItemContext);
-	
+
 	const { productId, deliveryOptionId } = cartItem;
 	const { id, deliveryDays, priceCents, estimatedDeliveryTimeMs } =
 		deliveryOption;
@@ -33,11 +38,11 @@ export default function DeliveryOption({deliveryOption}) {
 		</label>
 	);
 
-    async function deliveryOptionOnChange(event) {
-        const isUpdated = await updateDeliveryOption(id, productId);
-        if (isUpdated) {
-            refreshCart();
-            refreshPaymentSummary();
-        }
-    }
+	async function deliveryOptionOnChange(event) {
+		const isUpdated = await updateDeliveryOption(id, productId);
+		if (isUpdated) {
+			refreshStateViaAPI('cart-items?expand=product', setCart, setError);
+			refreshStateViaAPI('payment-summary', setPaymentSummary, setError);
+		}
+	}
 }

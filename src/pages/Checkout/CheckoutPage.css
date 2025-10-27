@@ -110,13 +110,24 @@
 }
 
 .checkout-page .product-price {
-
-  font-weight: 700;
   margin-bottom: 5px;
+}
+
+.checkout-page .product-price .one {
+  font-weight: 700;
+}
+
+.checkout-page .product-price .total {
+  font-weight: 400;
+  margin-left: 10px;
 }
 
 .checkout-page .product-quantity .link-primary {
   margin-left: 3px;
+}
+.checkout-page .product-quantity .add-quantity-input{
+  margin: 0px 3px;
+  width: 50px;
 }
 
 @media (max-width: 1000px) {

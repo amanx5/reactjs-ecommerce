@@ -2,16 +2,17 @@ import Product from './Product';
 import DeliveryDate from './DeliveryDate';
 import DeliveryOptions from './DeliveryOptions';
 import CartItemContext from '@/context/CartItemContext';
-import { useEffect, useState } from 'react';
-import { setStateFromAPIResponse } from '@/utils';
+import { useContext, useEffect, useState } from 'react';
+import { refreshStateViaAPI } from '@/utils';
+import AppContext from '@/context/AppContext';
 
 export default function CartItem({ cartItem }) {
+	const { setError } = useContext(AppContext);
 	const [deliveryOptions, setDeliveryOptions] = useState([]);
 
 	useEffect(() => {
-		const api = 'delivery-options?expand=estimatedDeliveryTime';
-		setStateFromAPIResponse(api, setDeliveryOptions);
-	}, []);
+		refreshStateViaAPI('delivery-options?expand=estimatedDeliveryTime', setDeliveryOptions, setError);
+	}, [setError]);
 
 	return (
 		<CartItemContext.Provider

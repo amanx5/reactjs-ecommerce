@@ -1,15 +1,18 @@
-import { addNewCartItem } from '@/utils';
+import { addNewCartItem, refreshStateViaAPI } from '@/utils';
 import AppContext from '@/context/AppContext';
-import { useContext, useRef } from 'react';
+import { useContext, useRef, useState } from 'react';
 
 export default function AddToCart({ product, quantity }) {
 	const { id } = product;
-	const { refreshCart } = useContext(AppContext);
+	const { setCart, setError } = useContext(AppContext);
+	const [isAdded, setIsAdded] = useState(false);
 	const addedToCart = useRef(null);
+
 	return (
 		<>
 			<div
-				ref={addedToCart} 
+				ref={addedToCart}
+				style={{opacity: isAdded?1:0}}
 				className='added-to-cart'>
 				<img src='images/icons/checkmark.png' />
 				Added
@@ -29,11 +32,13 @@ export default function AddToCart({ product, quantity }) {
 			quantity,
 		};
 
-		const isAdded = await addNewCartItem(data, refreshCart);
+		const isAdded = await addNewCartItem(data);
 		if (isAdded) {
-			refreshCart();
-			const addedToCartEl = addedToCart.current;
-			addedToCartEl.style.opacity=1;
+			refreshStateViaAPI('cart-items?expand=product', setCart, setError);
+			setIsAdded(true);
+			setTimeout(()=>{
+				setIsAdded(false);
+			}, 2000)
 		}
 	}
 }

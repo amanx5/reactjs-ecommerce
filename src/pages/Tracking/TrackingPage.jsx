@@ -1,20 +1,25 @@
 import './TrackingPage.css';
 import Header from '@/components/Header.jsx';
-import { setStateFromAPIResponse } from '@/utils';
-import { useEffect, useState } from 'react';
+import { refreshStateViaAPI } from '@/utils';
+import { useContext, useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import TrackingDetails from './components/TrackingDetails';
+import AppContext from '@/context/AppContext';
 
 export default function TrackingPage() {
+	const { setError } = useContext(AppContext);
 	const [order, setOrder] = useState(null);
 	const [searchParams] = useSearchParams();
 	const orderId = searchParams.get('orderId');
 	const productId = searchParams.get('productId');
 
 	useEffect(() => {
-		const api = `orders/${orderId}?expand=products`;
-		setStateFromAPIResponse(api, setOrder);
-	}, [orderId]);
+		refreshStateViaAPI(
+			`orders/${orderId}?expand=products`,
+			setOrder,
+			setError
+		);
+	}, [orderId, setError]);
 
 	return (
 		<>
@@ -24,10 +29,10 @@ export default function TrackingPage() {
 
 			<div className='tracking-page'>
 				{order ? (
-					<div className='order-tracking'>
+					<>
 						<ViewAllOrders />
 						<TrackingDetails order={order} productId={productId} />
-					</div>
+					</>
 				) : (
 					'Loading...'
 				)}
@@ -43,7 +48,3 @@ function ViewAllOrders() {
 		</Link>
 	);
 }
-
-
-
-

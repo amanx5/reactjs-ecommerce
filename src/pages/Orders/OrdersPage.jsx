@@ -1,15 +1,16 @@
 import './OrdersPage.css';
 import Header from '@/components/Header.jsx';
 import Order from './components/Order.jsx';
-import { useEffect, useState } from 'react';
-import { setStateFromAPIResponse } from '@/utils';
+import { useContext, useEffect, useState } from 'react';
+import { refreshStateViaAPI } from '@/utils';
+import AppContext from '@/context/AppContext';
 
 export default function OrdersPage() {
+	const { setError } = useContext(AppContext);
 	const [orders, setOrders] = useState([]);
 	useEffect(() => {
-		const api = 'orders?expand=products';
-		setStateFromAPIResponse(api, setOrders);
-	}, []);
+		refreshStateViaAPI('orders?expand=products', setOrders, setError);
+	}, [setError]);
 
 	return (
 		<>

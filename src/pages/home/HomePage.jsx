@@ -1,16 +1,17 @@
 import './HomePage.css';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Header from '@/components/Header.jsx';
 import Product from './components/product/Product.jsx';
-import { setStateFromAPIResponse } from '@/utils';
+import { refreshStateViaAPI } from '@/utils';
+import AppContext from '@/context/AppContext';
 
 export default function HomePage() {
+	const { setError} = useContext(AppContext);
 	const [products, setProducts] = useState([]);
 
 	useEffect(() => {
-		const api = 'products';
-		setStateFromAPIResponse(api, setProducts);
-	}, []);
+		refreshStateViaAPI('products', setProducts, setError);
+	}, [setError]);
 
 	return (
 		<>

@@ -1,52 +1,73 @@
-import { formatDate, getDeliveryDateHeading, getTrackingProgress } from "@/utils";
-import ProductDetails from "./ProductDetails";
+import {
+	calculateOrderStatus,
+	getOrderTrackingInfo,
+	orderStatusMap,
+} from '@/utils';
+import ProductDetails from './ProductDetails';
 
 export default function TrackingDetails({ order, productId }) {
-    const { products: orderProducts = [] } = order;
-    const orderProduct = orderProducts.find(
-        (orderProduct) => orderProduct.productId === productId
-    );
-	const progress = getTrackingProgress(order, orderProduct);
+	const { products: orderProducts = [] } = order;
+	const orderProduct = orderProducts.find(
+		(orderProduct) => orderProduct.productId === productId
+	);
+	// TODO - Return status from order api
+	const orderStatus = calculateOrderStatus(order, orderProduct);
 
-    return (
-        <>
-            <ProgressHeading orderProduct={orderProduct} progress={progress} />
-            <ProductDetails orderProduct={orderProduct} />
-            <ProgressLabels progress={progress} />
-            <ProgressBar progress={progress} />
-        </>
-    );
+	return (
+		<div className='order-tracking'>
+			<ProgressHeading
+				order={order}
+				orderProduct={orderProduct}
+				orderStatus={orderStatus}
+			/>
+			<ProductDetails orderProduct={orderProduct} />
+			<ProgressLabels orderStatus={orderStatus} />
+			<ProgressBar orderStatus={orderStatus} />
+		</div>
+	);
 }
 
-function ProgressHeading({ orderProduct, progress }) {
-	const heading = getDeliveryDateHeading(orderProduct, progress);
+function ProgressHeading({ order, orderProduct, orderStatus }) {
+	const { heading, subHeading } = getOrderTrackingInfo(
+		order,
+		orderProduct,
+		orderStatus
+	);
 
-	return <div className='delivery-date'>{heading}</div>;
+	return (
+		<>
+			<div className='heading'>{heading}</div>
+			<div className='sub-heading'>{subHeading}</div>
+		</>
+	);
 }
 
-function ProgressLabels({ progress }) {
+function ProgressLabels({ orderStatus }) {
+	const { created, shipped, outForDelivery, deliveryDelayed, delivered } =
+		orderStatusMap;
 	const stages = [
 		{
 			text: 'Preparing',
-			isCurrent: progress < 33,
+			status: created,
 		},
 		{
 			text: 'Shipped',
-			isCurrent: progress > 33 && progress < 100,
+			status: shipped,
 		},
 		{
 			text: 'Delivered',
-			isCurrent: progress >= 100,
+			status: delivered,
 		},
 	];
 
 	return (
 		<div className='progress-labels-container'>
-			{stages.map(({ text, isCurrent }, index) => (
+			{stages.map(({ text, status }, index) => (
 				<div
 					key={index}
 					className={
-						'progress-label' + (isCurrent ? ' current-status' : '')
+						'progress-label' +
+						(status <= orderStatus ? ' completed-status' : '')
 					}
 				>
 					{text}
@@ -56,8 +77,8 @@ function ProgressLabels({ progress }) {
 	);
 }
 
-function ProgressBar({ progress }) {
-	const progressPercentStr = progress + '%';
+function ProgressBar({ orderStatus }) {
+	const progressPercentStr = orderStatus + '%';
 
 	return (
 		<div className='progress-bar-container'>

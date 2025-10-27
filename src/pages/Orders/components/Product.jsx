@@ -1,7 +1,6 @@
-import { formatDate } from '@/utils';
-import { Link } from 'react-router';
-import BuyAgain from '@/assets/icons/buy-again.png';
+import { getOrderTrackingInfo } from '@/utils';
 import Actions from './Actions';
+import BuyAgain from './BuyAgain';
 
 export default function Product ({ order, orderProduct }) {
 	const { product, quantity, estimatedDeliveryTimeMs } = orderProduct;
@@ -16,13 +15,10 @@ export default function Product ({ order, orderProduct }) {
 			<div className='product-details'>
 				<div className='product-name'>{name}</div>
 				<div className='product-delivery-date'>
-					{'Arriving on: ' + formatDate(estimatedDeliveryTimeMs)}
+					{getOrderTrackingInfo(order, orderProduct).subHeading}
 				</div>
 				<div className='product-quantity'>Quantity: {quantity}</div>
-				<button className='buy-again-button button-primary'>
-					<img className='buy-again-icon' src={BuyAgain} />
-					<span className='buy-again-message'>Add to Cart</span>
-				</button>
+				<BuyAgain product={product} quantity={quantity}/>
 			</div>
 
 			<Actions order={order} productId={productId} />

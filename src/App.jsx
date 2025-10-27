@@ -7,30 +7,31 @@ import NotFoundPage from '@/pages/notfound/NotFoundPage';
 import AppContext from '@/context/AppContext';
 import { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router';
-import { setStateFromAPIResponse } from '@/utils';
+import { refreshStateViaAPI } from '@/utils';
+import ErrorPage from './pages/error/ErrorPage';
+import { APP_CONSTANTS } from '@/utils';
 
 export default function App() {
+	const [error, setError] = useState(null);
 	const [cart, setCart] = useState(null);
 
 	useEffect(() => {
-		refreshCart();
+		refreshStateViaAPI('cart-items?expand=product', setCart, setError);
 	}, []);
 
 	return (
-		<AppContext.Provider value={{ cart, setCart, refreshCart }}>
-			<Routes>
-				<Route index element={<HomePage />} />
-				<Route path='checkout' element={<CheckoutPage />} />
-				<Route path='orders' element={<OrdersPage />} />
-				<Route path='tracking' element={<TrackingPage />} />
-				<Route path='*' element={<NotFoundPage />} />
-			</Routes>
+		<AppContext.Provider value={{ error, setError, cart, setCart, APP_CONSTANTS }}>
+			{error ? (
+				<ErrorPage />
+			) : (
+				<Routes>
+					<Route index element={<HomePage />} />
+					<Route path='checkout' element={<CheckoutPage />} />
+					<Route path='orders' element={<OrdersPage />} />
+					<Route path='tracking' element={<TrackingPage />} />
+					<Route path='*' element={<NotFoundPage />} />
+				</Routes>
+			)}
 		</AppContext.Provider>
 	);
-
-	function refreshCart() {
-		const api = 'cart-items?expand=product';
-		setStateFromAPIResponse(api, setCart);
-	}
 }
-

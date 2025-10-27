@@ -1,5 +1,12 @@
 import axios from 'axios';
 
+
+export const APP_CONSTANTS = {
+	QUANTITY_ADD_MIN_LIMIT_PER_REQUEST: 0,
+	QUANTITY_ADD_MAX_LIMIT_PER_REQUEST: 10
+}
+
+
 /**
  * Makes an HTTP request to the given API endpoint using Axios.
  *
@@ -16,7 +23,7 @@ import axios from 'axios';
 export const apiRequest = async function (api, data, method = 'get') {
 	const result = { success: null, data: null, error: null };
 	if (!api) {
-		console.warn('Request not sent. [api param is missing]');
+		warnDev('Request not sent. [api param is missing]');
 		return result;
 	}
 
@@ -45,14 +52,28 @@ export const apiRequest = async function (api, data, method = 'get') {
 	return result;
 };
 
-export const setStateFromAPIResponse = async function (api, setter) {
-	if (!setter) {
-		console.warn('Request not sent. [Setter param is missing]');
+export const refreshStateViaAPI = async function (api, dataStateSetter, errorStateSeter) {
+	if (!dataStateSetter || !errorStateSeter) {
+		warnDev('Request not sent. [Setter param is missing]');
 		return;
 	}
 
-	const { success, data } = await apiRequest(api);
+	const { success, data, error } = await apiRequest(api);
 	if (success) {
-		setter(data);
+		dataStateSetter(data);
+		return true;
+	} else if (error) {
+		errorStateSeter(error);
+		return false;
 	}
 };
+
+export const warnDev = async function (msg) {
+	if (isDevMode()) {
+		console.warn(msg);
+	}
+}
+
+export const isDevMode = function () {
+	return import.meta.env.MODE === 'development';
+}
