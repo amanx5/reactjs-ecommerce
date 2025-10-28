@@ -38,7 +38,7 @@ export default function Product({ product }) {
 
 			<div className='product-spacer'></div>
 
-			<AddToCart product={product} quantity={quantity} />
+			<AddToCart product={product} quantity={quantity}  />
 		</div>
 	);
 }
