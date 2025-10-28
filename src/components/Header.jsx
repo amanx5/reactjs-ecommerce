@@ -2,12 +2,12 @@ import './Header.css';
 
 import LogoWhite from '../assets/logo/logo-white.png'
 import MobileLogoWhite from '../assets/logo/mobile-logo-white.png'
-import SearchIcon  from '../assets/icons/search-icon.png'
 import CartIcon  from '../assets/icons/cart-icon.png'
 import { NavLink } from 'react-router';
 import { useContext } from 'react';
 import AppContext from '@/context/AppContext';
 import { getTotalCartItems } from '@/utils';
+import SearchBar from './header/SearchBar';
 
 export default function Header() {
 	const {cart, setCart} = useContext(AppContext);
@@ -26,18 +26,7 @@ export default function Header() {
 			</div>
 
 			<div className='middle-section'>
-				<input
-					className='search-bar'
-					type='text'
-					placeholder='Search'
-				/>
-
-				<button className='search-button'>
-					<img
-						className='search-icon'
-						src={SearchIcon}
-					/>
-				</button>
+				<SearchBar />
 			</div>
 
 			<div className='right-section'>
