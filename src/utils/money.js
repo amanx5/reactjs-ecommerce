@@ -14,5 +14,6 @@ export const getPriceNative = function (valueInCents) {
 	const valueInDollars = valueInCents / 100;
 	const valueInNativeCurrency = valueInDollars * dollarRate[code];
 
-	return symbol + ' ' + valueInNativeCurrency.toFixed(2);
+	return symbol + valueInNativeCurrency.toFixed(2);
 };
+
