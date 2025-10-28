@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import Product from './Product';
 import { render, screen } from '@testing-library/react';
 import AppContext from '@/context/AppContext';
@@ -9,41 +9,42 @@ import axios from 'axios';
 // no-op version of axios (which doesn't connect to backend) will be invoked whereever axios is called
 vi.mock('axios');
 
-const id = 'dd82ca78-a18b-4e2a-9250-31e67412f98d';
-const name = 'Cotton Oversized Sweater - Gray';
-const image = 'images/products/women-plain-cotton-oversized-sweater-gray.jpg';
-const priceCents = 2400;
-const priceNative = getPriceNative(priceCents);
-const rating = {
-	stars: 4.5,
-	count: 317,
-};
-
-const setCart = vi.fn();
-const setError = vi.fn();
-
-function renderProductComponent() {
-	const product = {
-		keywords: ['sweaters', 'apparel'],
-		id,
-		image,
-		name,
-		rating,
-		priceCents,
-		createdAt: '2025-10-21T16:14:41.824Z',
-		updatedAt: '2025-10-21T16:14:41.824Z',
-	};
-
-	render(
-		<AppContext.Provider value={{ setCart, setError }}>
-			<Product product={product} />
-		</AppContext.Provider>
-	);
-}
 
 describe('Product component in HomePage', () => {
+    const id = 'dd82ca78-a18b-4e2a-9250-31e67412f98d';
+    const name = 'Cotton Oversized Sweater - Gray';
+    const image = 'images/products/women-plain-cotton-oversized-sweater-gray.jpg';
+    const priceCents = 2400;
+    const priceNative = getPriceNative(priceCents);
+    const rating = {
+    stars: 4.5,
+        count: 317,
+    };
+    const setCart = vi.fn();
+    const setError = vi.fn();
+    const product = {
+        keywords: ['sweaters', 'apparel'],
+        id,
+        image,
+        name,
+        rating,
+        priceCents,
+        createdAt: '2025-10-21T16:14:41.824Z',
+        updatedAt: '2025-10-21T16:14:41.824Z',
+    };
+    
+    beforeEach(() => {
+        // but this render AppContext on each testcase, 
+        // TODO if needed: move render outside beforeEach if not all tests in this suite needs AppContext to be rendered
+        render(
+            <AppContext.Provider value={{ setCart, setError }}>
+                <Product product={product} />
+            </AppContext.Provider>
+        );
+    });
+
+
 	it('displays product details correctly', () => {
-		renderProductComponent();
 
 		expect(
 			// searches for element inside the fake webpage with text passed in params
@@ -66,21 +67,17 @@ describe('Product component in HomePage', () => {
 	});
 
 	// test user interaction
-	it('adds product to cart on clicking AddToCart', async () => {
-		renderProductComponent();
+	it('should call axios and update cart when AddToCart is clicked', async () => {
 		const user = userEvent.setup();
+        axios.post.mockResolvedValueOnce({data:{}});
+        axios.get.mockResolvedValueOnce({data:{}});
 		await user.click(screen.getByTestId('AddToCart'));
 
 		expect(axios.post).toHaveBeenCalledWith('/api/cart-items', {
 			productId: id,
 			quantity: 1,
 		});
-
-		expect(axios.post).toHaveBeenCalledWith('/api/cart-items', {
-			productId: id,
-			quantity: 1,
-		});
-
-		// expect(setCart).toHaveBeenCalled();
+        expect(axios.get).toHaveBeenCalledWith('/api/cart-items?expand=product');
+		expect(setCart).toHaveBeenCalled();
 	});
 });
