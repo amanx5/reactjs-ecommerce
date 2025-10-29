@@ -9,75 +9,113 @@ import axios from 'axios';
 // no-op version of axios (which doesn't connect to backend) will be invoked whereever axios is called
 vi.mock('axios');
 
-
 describe('Product component in HomePage', () => {
-    const id = 'dd82ca78-a18b-4e2a-9250-31e67412f98d';
-    const name = 'Cotton Oversized Sweater - Gray';
-    const image = 'images/products/women-plain-cotton-oversized-sweater-gray.jpg';
-    const priceCents = 2400;
-    const priceNative = getPriceNative(priceCents);
-    const rating = {
-    stars: 4.5,
-        count: 317,
-    };
-    const setCart = vi.fn();
-    const setError = vi.fn();
-    const product = {
-        keywords: ['sweaters', 'apparel'],
-        id,
-        image,
-        name,
-        rating,
-        priceCents,
-        createdAt: '2025-10-21T16:14:41.824Z',
-        updatedAt: '2025-10-21T16:14:41.824Z',
-    };
-    
-    beforeEach(() => {
-        // but this render AppContext on each testcase, 
-        // TODO if needed: move render outside beforeEach if not all tests in this suite needs AppContext to be rendered
-        render(
-            <AppContext.Provider value={{ setCart, setError }}>
-                <Product product={product} />
-            </AppContext.Provider>
-        );
-    });
+	const setCart = vi.fn();
+	const setError = vi.fn();
+	const cartGetAPI = '/api/cart-items?expand=product';
+	const cartPostAPI = '/api/cart-items';
+	const product = {
+		keywords: ['socks', 'sports', 'apparel'],
+		id: 'e43638ce-6aa0-4b85-b27f-e1d07eb678c6',
+		image: 'images/products/athletic-cotton-socks-6-pairs.jpg',
+		name: 'Black and Gray Athletic Cotton Socks - 6 Pairs',
+		rating: {
+			stars: 4.5,
+			count: 87,
+		},
+		priceCents: 1090,
+		createdAt: '2025-10-21T16:14:41.818Z',
+		updatedAt: '2025-10-21T16:14:41.818Z',
+	};
+	let user, quantitySelectorContainer, quantitySelector;
 
+	beforeEach(() => {
+		axios.post.mockImplementation(function (url, data) {
+			if (url === cartPostAPI) {
+				return Promise.resolve({ data });
+			}
+		});
+
+		axios.get.mockImplementation(async function (url) {
+			if (url === cartGetAPI) {
+				return { data: [] };
+			}
+		});
+
+		user = userEvent.setup();
+        
+		// resets all previous calls and results of mock setCart
+		setCart.mockClear();
+
+		// but this renders AppContext on each testcase,
+		// TODO if needed: move render outside beforeEach if not all tests in this suite needs AppContext to be rendered
+		render(
+			<AppContext.Provider value={{ setCart, setError }}>
+				<Product product={product} />
+			</AppContext.Provider>
+		);
+
+		quantitySelectorContainer = screen.getByTestId(
+			'product-quantity-container'
+		);
+		quantitySelector =
+			quantitySelectorContainer.getElementsByTagName('select')[0];
+	});
 
 	it('displays product details correctly', () => {
-
 		expect(
 			// searches for element inside the fake webpage with text passed in params
-			screen.getByText(name)
+			screen.getByText(product.name)
 		).toBeInTheDocument(); // added by jest-dom, checkes whether the element in the document
 
-		expect(screen.getByText(priceNative)).toBeInTheDocument();
+		expect(
+			screen.getByText(getPriceNative(product.priceCents))
+		).toBeInTheDocument();
 
 		expect(screen.getByTestId('product-image')).toHaveAttribute(
 			'src',
-			image
+			product.image
 		);
 
 		expect(screen.getByTestId('product-rating-stars')).toHaveAttribute(
 			'src',
-			`images/ratings/rating-${rating.stars * 10}.png`
+			`images/ratings/rating-${product.rating.stars * 10}.png`
 		);
 
-		expect(screen.getByText(rating.count)).toBeInTheDocument();
+		expect(screen.getByText(product.rating.count)).toBeInTheDocument();
+	});
+
+	it('has quantity selector with default selection 1', () => {
+		expect(quantitySelector).toBeInTheDocument();
+		expect(quantitySelector).toHaveValue('1');
 	});
 
 	// test user interaction
 	it('should call axios and update cart when AddToCart is clicked', async () => {
-		const user = userEvent.setup();
-        axios.post.mockResolvedValueOnce({data:{}});
-        axios.get.mockResolvedValueOnce({data:{}});
 		await user.click(screen.getByTestId('AddToCart'));
 
-		expect(axios.post).toHaveBeenCalledWith('/api/cart-items', {
-			productId: id,
+		expect(axios.post).toHaveBeenCalledWith(cartPostAPI, {
+			productId: product.id,
 			quantity: 1,
 		});
-        expect(axios.get).toHaveBeenCalledWith('/api/cart-items?expand=product');
+
+		expect(axios.get).toHaveBeenCalledWith(cartGetAPI);
+
+		expect(setCart).toHaveBeenCalled();
+	});
+
+	it('updates the quantity state when user selects any option and sends it on clicking addtocart', async () => {
+		const newQuantity = '2';
+		await user.selectOptions(quantitySelector, newQuantity);
+		await user.click(screen.getByTestId('AddToCart'));
+
+		expect(quantitySelector).toHaveValue(newQuantity);
+
+		expect(axios.post).toHaveBeenCalledWith(cartPostAPI, {
+			productId: product.id,
+			quantity: parseInt(newQuantity),
+		});
+
 		expect(setCart).toHaveBeenCalled();
 	});
 });
