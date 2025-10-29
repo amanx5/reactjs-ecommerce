@@ -13,5 +13,13 @@ describe('getPriceNative', () => {
 		expect(getPriceNative(1001)).toBe('₹900.90');
 		expect(getPriceNative(1002)).toBe('₹901.80');
 	});
+
+	it('formats 0 cents correctly', () => {
+		expect(getPriceNative(0)).toBe('₹0.00');
+	})
+
+	it('formats negative numbers correctly', ()=>{
+		expect(getPriceNative(-100)).toBe('-₹90.00')
+	})
 });
  
