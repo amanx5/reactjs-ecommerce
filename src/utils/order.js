@@ -34,9 +34,9 @@ export const calculateOrderStatus = function (order, orderProduct) {
 
 		if (isBetween(timeFraction, 0, 10)) {
 			return created;
-		} else if (isBetween(timeFraction, 11, 50)) {
+		} else if (isBetween(timeFraction, 11, 80)) {
 			return shipped;
-		} else if (isBetween(timeFraction, 80, 89)) {
+		} else if (isBetween(timeFraction, 81, 100)) {
 			return outForDelivery;
 		}
 	}

@@ -18,9 +18,7 @@ export default function CheckoutPage() {
 	}, [setError]);
 
 	return (
-		<CheckoutContext.Provider
-			value={{ paymentSummary, setPaymentSummary }}
-		>
+		<CheckoutContext.Provider value={{ paymentSummary, setPaymentSummary }}>
 			<link rel='icon' type='image/png' href='favicon/cart.png' />
 			<title>Checkout</title>
 			<CheckoutHeader />

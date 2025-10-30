@@ -5,7 +5,9 @@ import AppContext from '@/context/AppContext';
 import axios from 'axios';
 import { MemoryRouter } from 'react-router';
 import userEvent from '@testing-library/user-event';
-import { products } from '~/vitest.setup.js';
+import { sampleAPIResponse } from '~/vitest.setup.js';
+const productsAPI = '/api/products';
+const products = sampleAPIResponse[productsAPI];
 
 describe('HomePage component', () => {
 	let user,
@@ -35,7 +37,7 @@ describe('HomePage component', () => {
 	});
 
 	it('loads products', async () => {
-		expect(axios.get).toHaveBeenCalledWith('/api/products');
+		expect(axios.get).toHaveBeenCalledWith(productsAPI);
 	});
 
 	it('displays all the product details correctly', async () => {
