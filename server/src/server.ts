@@ -1,27 +1,27 @@
-import { sequelize } from "@/sequelize";
+import { sequelizeInstance } from "@/constants";
+import { bindMiddlewares } from "@/middlewares";
+import {
+  addConsoleLog,
+  LOG_LEVELS,
+  logServerStart,
+} from "@/utils";
 import dotenv from "dotenv";
 import express from "express";
-import { addConsoleLog, LOG_LEVELS, logServerStart } from "@/utils";
-import { addMiddlewares } from "@/middlewares";
 
 // Load .env file contents into process.env
 dotenv.config();
 
 // create express app
 const app = express();
-const PORT = process.env.PORT ?? 5000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
 
-addMiddlewares(app);
-
+bindMiddlewares(app);
 startServer();
 
-/**
- * Starts the application server
- */
 async function startServer() {
   try {
-    await sequelize.authenticate();
-    await sequelize.sync();
+    await sequelizeInstance.authenticate();
+    await sequelizeInstance.sync();
 
     // Listen for HTTP requests on `PORT`
     app.listen(PORT, serverStartCallback);
@@ -31,6 +31,6 @@ async function startServer() {
   }
 
   function serverStartCallback() {
-    logServerStart(`http://localhost:${PORT}`);
+    logServerStart(PORT);
   }
 }

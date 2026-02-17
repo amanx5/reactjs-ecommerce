@@ -4,9 +4,8 @@ import express from "express";
 const cartRouter = express.Router();
 
 // GET cart
-cartRouter.get("/", async (req, res) => {
+cartRouter.get("/", async (req, res, next) => {
   const items = await Cart.findAll();
-
   res.json({
     success: "true",
     data: items,

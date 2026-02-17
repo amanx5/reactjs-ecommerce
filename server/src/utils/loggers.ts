@@ -1,5 +1,7 @@
-import { paths } from "@/paths";
+import { paths } from "@/constants";
+import { isDevelopment } from "@/utils/environment";
 import { appendFile } from "node:fs/promises";
+import { Request, Response } from "express";
 
 export enum LOG_LEVELS {
   INFO = 1,
@@ -15,15 +17,6 @@ export type Log = {
   elements: LogElements;
   time: string;
 };
-
-export function logServerStart(url: string) {
-  addConsoleLog(LOG_LEVELS.INFO, [
-    `\nServer started ➜  ${url}`,
-    "\n\nPress [Enter] to restart",
-  ]);
-
-  addAppLog(LOG_LEVELS.INFO, ["Server Started."]);
-}
 
 export function addConsoleLog(
   level: LogLevel,
@@ -93,7 +86,50 @@ function prepareLogStatement(log: Log, hideLogLevel?: boolean) {
 
   const timeStr = "[" + time + "] ";
   const levelStr = hideLogLevel ? "" : "[" + logLevelName + "] ";
-  const elementsStr = elements.map(String);
+  const messageStr = elements[0];
 
-  return timeStr + levelStr + elementsStr + "\n";
+  const otherElementsStr =
+    elements.length > 1
+      ? elements.slice(1).map(stringifyLogElement).join("")
+      : "";
+
+  return "\n" + timeStr + levelStr + messageStr + otherElementsStr;
+}
+
+function stringifyLogElement(el: unknown) {
+  let str;
+
+  if (el instanceof Error) {
+    str = el.stack;
+  } else {
+    str = JSON.stringify(el, null, 2);
+  }
+
+  return "\n" + str;
+}
+
+export function logServerStart(port: number) {
+  const urlStr = isDevelopment() ? "http://localhost:" + port : "";
+
+  addConsoleLog(LOG_LEVELS.INFO, [
+    `\nServer started on port ${port}  ➜  ${urlStr}`,
+    "\n\nPress [Enter] to restart",
+  ]);
+
+  addAppLog(LOG_LEVELS.INFO, ["Server Started."]);
+}
+
+export function logServerRequest(req: Request, res: Response) {
+  const { start, err } = res.locals;
+  const durationMs = Number(process.hrtime.bigint() - start) / 1_000_000;
+
+  const logLevel = err ? "ERROR" : "INFO";
+
+  const logMessage =
+    `${req.method} "${req.originalUrl}"  ` +
+    `→ "${res.statusCode} ${res.statusMessage}" ` +
+    `(${durationMs.toFixed(2)} ms)`;
+
+  const logElements = err ? [logMessage, err] : [logMessage];
+  addConsoleLog(LOG_LEVELS[logLevel], logElements, true);
 }

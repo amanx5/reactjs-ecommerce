@@ -1,30 +1,81 @@
 import path from 'path';
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// https://vite.dev/config/
-export default defineConfig({
-	build: {
-		outDir: path.resolve('../server/uiBuild'),
-	},
+/**
+ * Export the Vite configuration using defineConfig.
+ *
+ * `defineConfig` is a helper function provided by Vite to:
+ * - enable type inference for IDEs (auto-completion and validation)
+ * - allow dynamic configuration via a function that receives the current environment context
+ *
+ * @see https://vite.dev/config/
+ */
+export default defineConfig(getViteConfig);
 
-	plugins: [react()],
+/**
+ * getViteConfig generates the actual Vite configuration object.
+ *
+ * @param {Object} configEnv - The environment context provided by Vite
+ *   - configEnv.mode: 'development' | 'production' | 'test'
+ *   - configEnv.command: 'serve' | 'build'
+ * @returns {Object} Vite configuration object
+ */
+function getViteConfig(configEnv) {
+	/**
+	 * Load environment variables for the current mode.
+	 *
+	 * loadEnv returns only variables prefixed with `VITE_` from .env.development/.env.production by default.
+	 * To get all variables from .env.development/.env.production and system variables, pass '' as 3rd argument
+	 * To access only system environment variables, use process.env
+	 */
+	const env = loadEnv(configEnv.mode, process.cwd());
 
-	// server: {
-	//  // add proxy to prevent CORS error and also forward "/api" and "/images" requests to backend server
-	//   proxy: { // not needed now as backend server itself is serving UI
-	//     '/api': {
-	//       target: 'http://localhost:3000'
-	//     },
-	//     '/images': {
-	//       target: 'http://localhost:3000'
-	//     },
-	//   }
-	// },
+	return {
+		build: {
+			outDir: path.resolve('../server/uiBuild'),
+		},
 
-  resolve: {
-    alias: {
-      '@': path.resolve('./src'),
-    },
-  },
-})
+		plugins: [react()],
+
+		// server is development mode only config, it doesn't have any impact on build
+		server: {
+			host: true,
+
+			// add `proxy` to prevent CORS error and also forward "/api" and "/images" requests to backend server
+			proxy: {
+				'/api': {
+					target: env.VITE_BACKEND_URL,
+					changeOrigin: true,
+				},
+				'/images': {
+					target: env.VITE_BACKEND_URL,
+					changeOrigin: true,
+				},
+			},
+		},
+
+		resolve: {
+			alias: {
+				'@': path.resolve('./src'),
+			},
+		},
+	};
+}
+
+// `changeOrigin` rewrites the Host header of the proxied request to match the target server.
+//	 _______________________________________________________________________________________________________________________________
+//	|																																|
+//	|					GET /api												GET /api (forwarded)								|
+// 	|  Browser --------------------------------------> Vite (5173) ----------------------------------------------> Backend (5000)	|
+// 	|			(Header: Host: domain:5173)		  (changeOrigin: false)		 (Header: Host: domain:5173)							|
+//  |_______________________________________________________________________________________________________________________________|
+//	|																																|
+//	|					GET /api												GET /api (forwarded)								|
+// 	|  Browser --------------------------------------> Vite (5173) ----------------------------------------------> Backend (5000)	|
+// 	|			(Header: Host: domain:5173)		  (changeOrigin: true)	 	(Header: Host: domain:5000)							 	|
+//  |_______________________________________________________________________________________________________________________________|
+//
+// 	Hostname 	= domain (localhost/google/etc) or an IP
+// 	Origin 		= protocol + hostname + port
+// 	Host header = hostname + optional port

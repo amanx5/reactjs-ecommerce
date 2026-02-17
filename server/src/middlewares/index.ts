@@ -1,1 +1,1 @@
-export * from './addMiddlewares';
+export * from './bind-middlewares';

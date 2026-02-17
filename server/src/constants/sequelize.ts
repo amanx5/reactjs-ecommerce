@@ -1,7 +1,6 @@
-import { paths } from "@/paths";
+import { paths } from "@/constants";
 import { addSqlLog } from "@/utils";
 import { Sequelize, type Options } from "sequelize";
-
 
 const SEQUELIZE_OPTIONS: Options = {
   dialect: "sqlite",
@@ -9,6 +8,6 @@ const SEQUELIZE_OPTIONS: Options = {
   logging: addSqlLog,
 };
 
-const sequelize = new Sequelize(SEQUELIZE_OPTIONS);
+const sequelizeInstance = new Sequelize(SEQUELIZE_OPTIONS);
 
-export { sequelize };
+export { sequelizeInstance };

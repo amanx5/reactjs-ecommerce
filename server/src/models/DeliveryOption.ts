@@ -1,7 +1,7 @@
-import { sequelize } from "@/sequelize";
+import { sequelizeInstance } from "@/constants";
 import { DataTypes } from "sequelize";
 
-const DeliveryOption = sequelize.define(
+const DeliveryOption = sequelizeInstance.define(
   "DeliveryOption",
   {
     id: {

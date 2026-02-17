@@ -2,8 +2,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "~/*": ["*"],
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"], // ordered before ~/ deliberately for shorter import path suggestions (TS suggest auto imports based on paths order)
+      "~/*": ["./*"]
     },
     "target": "ES2022",
     "module": "ESNext",
