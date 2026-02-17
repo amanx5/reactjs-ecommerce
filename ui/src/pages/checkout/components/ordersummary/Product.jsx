@@ -159,7 +159,7 @@ export default function Product() {
 
 	async function refreshCartAndPaymentSummary() {
 		const isCartRefreshed = await refreshStateViaAPI(
-			'cart-items?expand=product',
+			'cart?expand=product',
 			setCart,
 			setError
 		);

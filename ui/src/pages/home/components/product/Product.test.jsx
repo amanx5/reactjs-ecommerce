@@ -12,8 +12,8 @@ vi.mock('axios');
 describe('Product component in HomePage', () => {
 	const setCart = vi.fn();
 	const setError = vi.fn();
-	const cartGetAPI = '/api/cart-items?expand=product';
-	const cartPostAPI = '/api/cart-items';
+	const cartGetAPI = '/api/cart?expand=product';
+	const cartPostAPI = '/api/cart';
 	const product = {
 		keywords: ['socks', 'sports', 'apparel'],
 		id: 'e43638ce-6aa0-4b85-b27f-e1d07eb678c6',

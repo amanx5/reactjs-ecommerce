@@ -7,7 +7,7 @@ export default function OrderSummary() {
     
 	return (
 		<div className='order-summary'>
-			{cart.map((cartItem) => (
+			{cart?.map?.((cartItem) => (
 				<CartItem key={cartItem.id} cartItem={cartItem} />
 			))}
 		</div>

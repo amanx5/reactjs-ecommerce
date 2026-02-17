@@ -18,7 +18,7 @@ export const APP_CONSTANTS = {
  *          an error (if any occurred), and a success flag.
  *
  * @example
- * const { success, data, error } = await apiRequest('cart-items', { productId: 'abc', quantity: 2 }, 'post');
+ * const { success, data, error } = await apiRequest('cart', { productId: 'abc', quantity: 2 }, 'post');
  */
 export const apiRequest = async function (api, data, method = 'get') {
 	const result = { success: null, data: null, error: null };
@@ -75,5 +75,5 @@ export const warnDev = async function (msg) {
 }
 
 export const isDevMode = function () {
-	return import.meta.env.MODE === 'development';
+	return import.meta.env.MODE !== 'production';
 }

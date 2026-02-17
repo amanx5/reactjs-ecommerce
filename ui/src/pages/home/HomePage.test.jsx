@@ -58,7 +58,7 @@ describe('HomePage component', () => {
 
 	it('updates the cart on clicking addtocart of the product', async () => {
 		const getParamsToCallCartPostAPI = (productIndex) => [
-			'/api/cart-items',
+			'/api/cart',
 			{
 				productId: products[productIndex].id,
 				quantity: 1,

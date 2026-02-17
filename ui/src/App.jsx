@@ -16,7 +16,7 @@ export default function App() {
 	const [cart, setCart] = useState(null);
 
 	useEffect(() => {
-		refreshStateViaAPI('cart-items?expand=product', setCart, setError);
+		refreshStateViaAPI('cart?expand=product', setCart, setError);
 	}, []);
 
 	return (

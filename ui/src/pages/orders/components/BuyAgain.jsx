@@ -25,7 +25,7 @@ export default function BuyAgain({product, quantity}) {
 
 		const isAdded = await addNewCartItem(data);
 		if (isAdded) {
-			refreshStateViaAPI('cart-items?expand=product', setCart, setError);
+			refreshStateViaAPI('cart?expand=product', setCart, setError);
 		}
 	}
 }

@@ -23,7 +23,7 @@ export const getTotalCartItems = function (cart) {
 };
 
 export const addNewCartItem = async function (data) {
-	const { success } = await apiRequest('cart-items', data, 'post');
+	const { success } = await apiRequest('cart', data, 'post');
 
 	if (success) {
 		return true;
@@ -31,7 +31,7 @@ export const addNewCartItem = async function (data) {
 };
 
 export const deleteCartItem = async function (productId) {
-	const api = `cart-items/${productId}`;
+	const api = `cart/${productId}`;
 	const { success } = await apiRequest(api, null, 'delete');
 
 	if (success) {
@@ -47,7 +47,7 @@ export const updateDeliveryOption = async function (
 		deliveryOptionId,
 	};
 
-	const api = `cart-items/${productId}`;
+	const api = `cart/${productId}`;
 
 	const { success } = await apiRequest(api, data, 'put');
 

@@ -97,7 +97,7 @@ describe('PaymentSummary', () => {
 		expect(axios.post).toHaveBeenCalledWith('/api/orders', null);
 
 		expect(axios.get).toHaveBeenCalledWith(
-			'/api/cart-items?expand=product'
+			'/api/cart?expand=product'
 		);
 
 		expect(setCart).toHaveBeenCalled();

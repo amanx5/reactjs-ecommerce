@@ -21,7 +21,7 @@ export default function OrdersPage() {
 				<div className='page-title'>Your Orders</div>
 
 				<div className='orders-grid'>
-					{orders.map((order) => (
+					{orders.map?.((order) => (
 						<Order key={order.id} order={order}/>
 					))}
 				</div>
