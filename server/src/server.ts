@@ -1,10 +1,6 @@
 import { sequelizeInstance } from "@/constants";
 import { bindMiddlewares } from "@/middlewares";
-import {
-  addConsoleLog,
-  LOG_LEVELS,
-  logServerStart,
-} from "@/utils";
+import { addAppLog, addConsoleLog, isDevelopment, LOG_LEVELS } from "@/utils";
 import dotenv from "dotenv";
 import express from "express";
 
@@ -23,14 +19,26 @@ async function startServer() {
     await sequelizeInstance.authenticate();
     await sequelizeInstance.sync();
 
-    // Listen for HTTP requests on `PORT`
+    // Listen for HTTP requests
     app.listen(PORT, serverStartCallback);
-  } catch (error) {
-    addConsoleLog(LOG_LEVELS.ERROR, ["Failed to start server:", error], true);
+  } catch (err) {
+    addAppLog(LOG_LEVELS.ERROR, ["Unable to start the server.", err], true);
     process.exit(1);
   }
+}
 
-  function serverStartCallback() {
-    logServerStart(PORT);
+function serverStartCallback(err?: Error) {
+  if (err) {
+    addAppLog(LOG_LEVELS.ERROR, ["Error occurred in the server.", err], true);
+  } else {
+    const startStr = `Server started on port ${PORT}`;
+    const urlStr = isDevelopment() ? `➜  http://localhost:${PORT}` : "";
+
+    addConsoleLog(LOG_LEVELS.INFO, [
+      `\n${startStr} ${urlStr}`,
+      "\n\nPress [ENTER] to restart",
+    ]);
+
+    addAppLog(LOG_LEVELS.INFO, [startStr], false);
   }
 }

@@ -1,15 +1,10 @@
-import { addConsoleLog, LOG_LEVELS } from "@/utils";
 import { Cart, DeliveryOption, Order, Product } from "@/models/";
 import { JSON_MAP } from "~/json/";
-import { Router, Request, Response } from "express";
+import { Router } from "express";
 
 const resetRouter = Router();
 
-resetRouter.get("/", (req, res) => {
-  res.send("Invalid request method for Reset API");
-});
-
-resetRouter.post("/", async (req: Request, res: Response) => {
+resetRouter.post("/", async (req, res) => {
   try {
     // Clear existing data
     await Cart.destroy({ where: {}, truncate: true, force: true });
@@ -27,13 +22,8 @@ resetRouter.post("/", async (req: Request, res: Response) => {
       message: "Database reset successfully",
     });
   } catch (error) {
-    addConsoleLog(LOG_LEVELS.ERROR, ["Failed to reset DB", error], true); // TODO throw an error instead and catch at upper layer and log accordingly
-
-    res.status(500).json({
-      success: false,
-      message: "Failed to reset database",
-      error: error instanceof Error ? error.message : "Unknown error",
-    });
+    res.locals.err = error;
+    res.sendStatus(500);
   }
 });
 

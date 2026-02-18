@@ -1,58 +1,48 @@
 import { cartRouter, ordersRouter, productsRouter, resetRouter } from "@/api";
 import { paths } from "@/constants";
+import { addAppRequestLog } from "@/utils";
+import cors from "cors";
 import express, {
   type RequestHandler,
   type ErrorRequestHandler,
 } from "express";
-import cors from "cors";
-import { logServerRequest } from "@/utils";
 
-/**
- * - Middlewares are bound to an express application or a router by calling:
- *  .use(...);
- *    OR
- *  .<method>(...);   // where <method> is [request method](https://expressjs.com/en/5x/api.html#app.METHOD)
- *
- * - A middleware can propagate (allow next middlewares to execute) by calling next() or next(err)
- *
- * @see https://expressjs.com/en/guide/using-middleware.html
- */
-
-// ********************************************************************************************************
-//                                      Third-party middlewares
-//                                      ~~~~~~~~~~~~~~~~~~~~~~~
+//
+// ******************************************************************************************************************
+//                                          Third-party middlewares
+//                                          ~~~~~~~~~~~~~~~~~~~~~~~
 // - These are shipped/available at external sources.
 // - `cors` sets headers like Access-Control-Allow-Origin, etc. then propagates by calling next()
-// ********************************************************************************************************
+// ******************************************************************************************************************
 // allow cors with frontend
 const corsMiddleWare = cors({
   origin: process.env.DEV_FRONTEND_URL,
   credentials: true,
 });
 
-// ********************************************************************************************************
-//                                       Built-in middlewares
-//                                      ~~~~~~~~~~~~~~~~~~~~~~
+//
+// ******************************************************************************************************************
+//                                          Built-in middlewares
+//                                          ~~~~~~~~~~~~~~~~~~~~
 // - These are shipped/available in express package itself.
 // - `express.json` only parses json & only looks at requests where the Content-Type header matches the type option.
 // - `express.static` serves static files & doesn't propagate when request URL matches with `root` directory argument
-// ********************************************************************************************************
+// ******************************************************************************************************************
 const jsonMiddleware = express.json();
 const apiPublicMiddleware = express.static(paths.apiPublic);
 const imagesMiddleware = express.static(paths.images);
 const uiBuildMiddleware = express.static(paths.uiBuild);
 
-// ********************************************************************************************************
-//                                    Application-level middlewares
-//                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//
+// ******************************************************************************************************************
+//                                       Application-level middlewares
+//                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // - Any middleware which is bound to an instance of express()
-// ********************************************************************************************************
+// ******************************************************************************************************************
 const loggerMiddleware: RequestHandler = (req, res, next) => {
   res.locals.start = process.hrtime.bigint();
 
-  res.on("finish", () => {
-    logServerRequest(req, res);
-  });
+  res.on("finish", () => addAppRequestLog(req, res));
 
   next();
 };
@@ -85,24 +75,26 @@ const notFoundMiddleware: RequestHandler = (req, res, next) => {
   res.sendStatus(404);
 };
 
-// ********************************************************************************************************
-//                                     Error-handling middleware
-//                                     ~~~~~~~~~~~~~~~~~~~~~~~~~
+//
+// ******************************************************************************************************************
+//                                        Error-handling middleware
+//                                        ~~~~~~~~~~~~~~~~~~~~~~~~~
 // - Same as Application-level, but the function signature is different.
 // - Special middleware, it is triggered only when next(err) is called
 // - It must be added without a path
 // - It must be last
-// ********************************************************************************************************
+// ******************************************************************************************************************
 const errorMiddleware: ErrorRequestHandler = (err, req, res, next) => {
   res.locals.err = err;
   res.sendStatus(500);
 };
 
-// ********************************************************************************************************
-//                                      Router-level middlewares
-//                                      ~~~~~~~~~~~~~~~~~~~~~~~~
+//
+// ******************************************************************************************************************
+//                                        Router-level middlewares
+//                                        ~~~~~~~~~~~~~~~~~~~~~~~~
 // - Any middleware which is bound to an instance of express.Router()
-// ********************************************************************************************************
+// ******************************************************************************************************************
 const apiRouter = express.Router();
 apiRouter.use(apiPublicMiddleware);
 apiRouter.use("/cart", cartRouter);

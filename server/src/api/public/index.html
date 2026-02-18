@@ -4,8 +4,104 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>API | Ecommerce App</title>
+    <link rel="stylesheet" href="index.css" />
   </head>
   <body>
-    API Endpoints
+    <div class="layout">
+      <!-- LEFT: endpoint list -->
+      <aside class="endpoints">
+        <h1>Test API Endpoints</h1>
+
+        <div class="group">
+          <div class="group-label">Cart</div>
+          <ul>
+            <li>
+              <a onclick="hit('GET', '/api/cart/')">
+                <span class="badge GET">GET</span> /api/cart/</a
+              >
+            </li>
+            <li>
+              <a onclick="hit('POST', '/api/cart/add')">
+                <span class="badge POST">POST</span> /api/cart/add</a
+              >
+            </li>
+            <li>
+              <a onclick="hit('DELETE', '/api/cart/1')">
+                <span class="badge DELETE">DELETE</span> /api/cart/:itemId</a
+              >
+            </li>
+          </ul>
+        </div>
+
+        <div class="group">
+          <div class="group-label">Orders</div>
+          <ul>
+            <li>
+              <a onclick="hit('GET', '/api/orders/')">
+                <span class="badge GET">GET</span> /api/orders/</a
+              >
+            </li>
+            <li>
+              <a onclick="hit('GET', '/api/orders/1')">
+                <span class="badge GET">GET</span> /api/orders/:id</a
+              >
+            </li>
+            <li>
+              <a onclick="hit('POST', '/api/orders/')">
+                <span class="badge POST">POST</span> /api/orders/</a
+              >
+            </li>
+          </ul>
+        </div>
+
+        <div class="group">
+          <div class="group-label">Products</div>
+          <ul>
+            <li>
+              <a onclick="hit('GET', '/api/products/')">
+                <span class="badge GET">GET</span> /api/products/</a
+              >
+            </li>
+            <li>
+              <a onclick="hit('GET', '/api/products/1')">
+                <span class="badge GET">GET</span> /api/products/:id</a
+              >
+            </li>
+            <li>
+              <a onclick="hit('POST', '/api/products/')">
+                <span class="badge POST">POST</span> /api/products/</a
+              >
+            </li>
+          </ul>
+        </div>
+
+        <div class="group">
+          <div class="group-label">Reset</div>
+          <ul>
+            <li>
+              <a onclick="hit('POST', '/api/reset/')">
+                <span class="badge POST">POST</span> /api/reset/</a
+              >
+            </li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- RIGHT: response panel -->
+      <section class="response-col">
+        <div id="response-panel">
+          <div id="response-header">
+            <span id="response-status"></span>
+            <span id="response-url"></span>
+          </div>
+          <pre id="response-body"></pre>
+        </div>
+        <div id="response-empty">
+          <span>← click an endpoint</span>
+        </div>
+      </section>
+    </div>
+
+    <script src="index.js"></script>
   </body>
 </html>

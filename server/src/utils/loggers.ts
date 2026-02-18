@@ -1,5 +1,4 @@
 import { paths } from "@/constants";
-import { isDevelopment } from "@/utils/environment";
 import { appendFile } from "node:fs/promises";
 import { Request, Response } from "express";
 
@@ -18,66 +17,20 @@ export type Log = {
   time: string;
 };
 
-export function addConsoleLog(
-  level: LogLevel,
-  elements: LogElements,
-  persist?: boolean,
-) {
-  switch (level) {
-    case LOG_LEVELS.ERROR:
-      console.error(...elements);
-      break;
-    case LOG_LEVELS.INFO:
-      console.info(...elements);
-      break;
-    case LOG_LEVELS.WARN:
-      console.warn(...elements);
-      break;
-  }
-
-  if (persist) {
-    addAppLog(level, elements);
-  }
-}
-
-export async function addAppLog(level: LogLevel, elements: LogElements) {
-  const log: Log = {
-    level,
-    elements,
-    time: getDateTimeStrForLogging(),
-  };
-
-  try {
-    await appendFile(paths.logsApp, prepareLogStatement(log));
-  } catch (err) {
-    addConsoleLog(
-      LOG_LEVELS.ERROR,
-      ["Error occured in updating `app.log` file.", err],
-      false, // WARNING: DON'T MAKE IT TRUE (Circular Recursion)
-    );
-  }
-}
-
-export async function addSqlLog(sql: string) {
-  const log: Log = {
-    level: LOG_LEVELS.INFO,
-    elements: [sql],
-    time: getDateTimeStrForLogging(),
-  };
-
-  try {
-    await appendFile(paths.logsSql, prepareLogStatement(log, true));
-  } catch (err) {
-    addConsoleLog(
-      LOG_LEVELS.ERROR,
-      ["Error occured in updating `sql.log` file.", err],
-      true,
-    );
-  }
-}
-
 function getDateTimeStrForLogging() {
   return new Date().toLocaleString();
+}
+
+function stringifyLogElement(el: unknown) {
+  let str;
+
+  if (el instanceof Error) {
+    str = el.stack;
+  } else {
+    str = JSON.stringify(el, null, 2);
+  }
+
+  return "\n" + str;
 }
 
 function prepareLogStatement(log: Log, hideLogLevel?: boolean) {
@@ -96,34 +49,67 @@ function prepareLogStatement(log: Log, hideLogLevel?: boolean) {
   return "\n" + timeStr + levelStr + messageStr + otherElementsStr;
 }
 
-function stringifyLogElement(el: unknown) {
-  let str;
+export function addConsoleLog(level: LogLevel, elements: LogElements) {
+  switch (level) {
+    case LOG_LEVELS.ERROR:
+      console.error(...elements);
+      break;
+    case LOG_LEVELS.INFO:
+      console.info(...elements);
+      break;
+    case LOG_LEVELS.WARN:
+      console.warn(...elements);
+      break;
+  }
+}
 
-  if (el instanceof Error) {
-    str = el.stack;
-  } else {
-    str = JSON.stringify(el, null, 2);
+export async function addAppLog(
+  level: LogLevel,
+  elements: LogElements,
+  printConsole: boolean,
+) {
+  if (printConsole) {
+    addConsoleLog(level, elements);
   }
 
-  return "\n" + str;
+  try {
+    const log: Log = {
+      level,
+      elements,
+      time: getDateTimeStrForLogging(),
+    };
+
+    await appendFile(paths.logsApp, prepareLogStatement(log));
+  } catch (err) {
+    addConsoleLog(LOG_LEVELS.ERROR, [
+      "Error occured in updating `app.log` file.",
+      err,
+    ]);
+  }
 }
 
-export function logServerStart(port: number) {
-  const urlStr = isDevelopment() ? "http://localhost:" + port : "";
+export async function addSqlLog(sql: string) {
+  try {
+    const log: Log = {
+      level: LOG_LEVELS.INFO,
+      elements: [sql],
+      time: getDateTimeStrForLogging(),
+    };
 
-  addConsoleLog(LOG_LEVELS.INFO, [
-    `\nServer started on port ${port}  ➜  ${urlStr}`,
-    "\n\nPress [Enter] to restart",
-  ]);
-
-  addAppLog(LOG_LEVELS.INFO, ["Server Started."]);
+    await appendFile(paths.logsSql, prepareLogStatement(log, true));
+  } catch (err) {
+    addConsoleLog(LOG_LEVELS.ERROR, [
+      "Error occured in updating `sql.log` file.",
+      err,
+    ]);
+  }
 }
 
-export function logServerRequest(req: Request, res: Response) {
+export function addAppRequestLog(req: Request, res: Response) {
   const { start, err } = res.locals;
   const durationMs = Number(process.hrtime.bigint() - start) / 1_000_000;
 
-  const logLevel = err ? "ERROR" : "INFO";
+  const logLevel: LogLevel = err ? LOG_LEVELS.ERROR : LOG_LEVELS.INFO;
 
   const logMessage =
     `${req.method} "${req.originalUrl}"  ` +
@@ -131,5 +117,6 @@ export function logServerRequest(req: Request, res: Response) {
     `(${durationMs.toFixed(2)} ms)`;
 
   const logElements = err ? [logMessage, err] : [logMessage];
-  addConsoleLog(LOG_LEVELS[logLevel], logElements, true);
+
+  addAppLog(logLevel, logElements, true);
 }
