@@ -1,11 +1,7 @@
 import { sequelizeInstance } from "@/constants";
 import { bindMiddlewares } from "@/middlewares";
 import { addAppLog, addConsoleLog, isDevelopment, LOG_LEVELS } from "@/utils";
-import dotenv from "dotenv";
 import express from "express";
-
-// Load .env file contents into process.env
-dotenv.config();
 
 // create express app
 const app = express();

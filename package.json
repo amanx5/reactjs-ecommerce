@@ -3,6 +3,6 @@
     "private": true,
     "scripts": {
         "ui": "cd ui && npm run dev",
-        "server": "cd server && npm run dev-watch"
+        "server": "cd server && npm run devw"
     }
 }

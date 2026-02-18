@@ -7,6 +7,9 @@ import express, {
   type ErrorRequestHandler,
 } from "express";
 
+const uiDevUrlEnvKey = "DEV_UI_URL";
+const uiDevUrl = process.env[uiDevUrlEnvKey];
+
 //
 // ******************************************************************************************************************
 //                                          Third-party middlewares
@@ -16,7 +19,7 @@ import express, {
 // ******************************************************************************************************************
 // allow cors with frontend
 const corsMiddleWare = cors({
-  origin: process.env.DEV_FRONTEND_URL,
+  origin: uiDevUrl,
   credentials: true,
 });
 
@@ -63,11 +66,11 @@ const uiBuildHtmlMiddleware: RequestHandler = (req, res, next) => {
 };
 
 const uiDevelopmentMiddleware: RequestHandler = (req, res, next) => {
-  if (process.env.DEV_FRONTEND_URL) {
-    // DEV_FRONTEND_URL will handle all future requests
-    res.redirect(process.env.DEV_FRONTEND_URL);
+  if (uiDevUrl) {
+    // devUrl will handle all future requests
+    res.redirect(uiDevUrl + req.originalUrl);
   } else {
-    res.send("DEV_FRONTEND_URL is missing in '.env' file.");
+    res.send(`"${uiDevUrlEnvKey}" is missing in environment file.`);
   }
 };
 
