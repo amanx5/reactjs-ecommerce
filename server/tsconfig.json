@@ -1,8 +1,13 @@
+// https://www.typescriptlang.org/tsconfig/#compilerOptions
 {
+  // top level
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"],
+
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"], // ordered before ~/ deliberately for shorter import path suggestions (TS suggest auto imports based on paths order)
+      "@/*": ["./src/*"], // ordered before ~/ deliberately for shorter import path suggestions (TS suggest auto imports based on paths order), but avoid importing files outside /src/ as they won't be compiled
       "~/*": ["./*"]
     },
     "target": "ES2022",

@@ -1,5 +1,5 @@
 import { Cart, DeliveryOption, Order, Product } from "@/models/";
-import { JSON_MAP } from "~/json/";
+import { JSON_MAP } from "@/json";
 import { Router } from "express";
 
 const resetRouter = Router();
