@@ -1,12 +1,12 @@
 {
-  "name": "ecommerce-backend",
+  "name": "ecommerce-server",
   "version": "1.0.0",
   "description": "Ecommerce backend API",
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "dev": "tsx --env-file=.env src/server.ts",
-    "devw": "tsx watch --env-file=.env src/server.ts"
+    "dev": "tsx watch --env-file=.env src/server.ts",
+    "prod": "node --env-fle=.env dist/server.js"
   },
   "keywords": [],
   "author": "",

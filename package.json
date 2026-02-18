@@ -1,8 +1,16 @@
 {
-    "name": "ecommerce-monorepo",
-    "private": true,
-    "scripts": {
-        "ui": "cd ui && npm run dev",
-        "server": "cd server && npm run devw"
-    }
+	"name": "ecommerce",
+	"private": true,
+	"scripts": {
+		"dev": "pnpm -r --parallel run dev",
+		"dev:ui": "pnpm -F ecommerce-ui dev",
+		"dev:server": "pnpm -F ecommerce-server dev",
+		"prod": "pnpm -r --parallel run build && pnpm -F ecommerce-server prod"
+	},
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"esbuild",
+			"sqlite3"
+		]
+	}
 }
