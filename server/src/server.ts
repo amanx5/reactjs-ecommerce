@@ -1,6 +1,12 @@
 import { sequelizeInstance } from "@/constants";
 import { bindMiddlewares } from "@/middlewares";
-import { addAppLog, addConsoleLog, isDevelopment, LOG_LEVELS } from "@/utils";
+import {
+  addAppLog,
+  addConsoleLog,
+  getEnvironment,
+  isDevelopment,
+  LOG_LEVELS,
+} from "@/utils";
 import express from "express";
 
 // create express app
@@ -27,13 +33,15 @@ function serverStartCallback(err?: Error) {
   if (err) {
     addAppLog(LOG_LEVELS.ERROR, ["Error occurred in the server.", err], true);
   } else {
-    const startStr = `Server started on port ${PORT}`;
+    const env = getEnvironment();
+    const startStr = `[${env}] Server started on port ${PORT}`;
     const urlStr = isDevelopment() ? `➜  http://localhost:${PORT}` : "";
 
-    addConsoleLog(LOG_LEVELS.INFO, [
+    addConsoleLog(
+      LOG_LEVELS.INFO,
       `\n${startStr} ${urlStr}`,
       "\n\nPress [ENTER] to restart",
-    ]);
+    );
 
     addAppLog(LOG_LEVELS.INFO, [startStr], false);
   }

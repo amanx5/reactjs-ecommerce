@@ -58,6 +58,7 @@ const uiBuildHtmlMiddleware: RequestHandler = (req, res, next) => {
     if (err && !res.headersSent) {
       // transfer failed
       const isFileMissing = "code" in err && err.code === "ENOENT"; // ErrorNoENTry
+      res.locals.err = err;
       res.send(
         isFileMissing ? "Webpage not Available" : "Something went wrong",
       );
@@ -70,7 +71,9 @@ const uiDevelopmentMiddleware: RequestHandler = (req, res, next) => {
     // devUrl will handle all future requests
     res.redirect(uiDevUrl + req.originalUrl);
   } else {
-    res.send(`"${uiDevUrlEnvKey}" is missing in environment file.`);
+    const err = `"${uiDevUrlEnvKey}" is missing in environment file.`
+    res.locals.err = err;
+    res.send(err);
   }
 };
 

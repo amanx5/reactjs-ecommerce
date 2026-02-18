@@ -15,14 +15,13 @@ const pathResolver = createMatchPath(
 /**
  * [EXPERIMENTAL] Resolves provided `input` based on tsconfig.json
  *
- * This has better DX than "./paths.ts", as this supports path aliases which makes it more readable
- * but the implementation is complex and less reliable.
+ * @example absolutePathExperimental("@/api/public/"); // more DX friendly than absolutePath(relativeTo, "../api/public/");
  */
 export const absolutePathExperimental = (input: string) => {
   const resolved = pathResolver(
     input,
     undefined,
-    // override `fileExists`, to resolve directories path like ~/uiBuild/ (by default this will not resolve)  
+    // override `fileExists`, to resolve directories path like "~/dist/ui/" (by default this will not resolve since file extension is not present)
     // It has one drawback that now files existence will not be checked as well
     (name) => true,
   );
@@ -33,7 +32,7 @@ export const absolutePathExperimental = (input: string) => {
 
   const resolvedFinal = path.resolve(resolved);
 
-  // path.resolve ignores trailing "/", 
+  // path.resolve ignores trailing "/",
   // code below re-adds trailing slash if original had it
   // code below is optional, as URL should work without it
   // if (

@@ -1,5 +1,10 @@
+const envKey = "NODE_ENV";
+
+export function getEnvironment() {
+  return process.env[envKey];
+}
 export function isProduction() {
-  return process.env.NODE_ENV === "production";
+  return getEnvironment() === "production";
 }
 
 export function isDevelopment() {

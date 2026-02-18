@@ -2,19 +2,48 @@
 {
   // top level
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"],
 
   "compilerOptions": {
+    // modules
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"], // ordered before ~/ deliberately for shorter import path suggestions (TS suggest auto imports based on paths order), but avoid importing files outside /src/ as they won't be compiled
       "~/*": ["./*"]
     },
-    "target": "ES2022",
     "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "strict": true,
+
+    // "moduleResolution": "bundler" makes TypeScript resolve imports the same way
+    // modern bundlers (esbuild, vite, etc.) do during type-checking.
+    //
+    // This allows path aliases and extension-less imports without errors,
+    // because TypeScript assumes a bundler will rewrite them.
+    //
+    // However, if the project is compiled using plain `tsc` (without a bundler),
+    // those imports will remain unchanged in the output and may break at runtime,
+    // since `tsc` does NOT rewrite paths and Node does NOT understand path aliases.
+    //
+    // Use "bundler" only when:
+    //   - You are actually bundling (esbuild, tsup, Vite, etc.)
+    //   - You are running via tsx (which uses esbuild internally)
+    //   - You run `tsc` followed by a tool like `tsc-alias` (WARNING: It still doesn't rewrite extensionless imports)
+    //
+    // Otherwise, prefer "NodeNext" and use relative imports in source files and follow native Node ESM rules.
+    "moduleResolution": "bundler",
+
+    // By default "rootDir" is computed as longest common path of all non-declaration input files
+    // Assume "include"="src/**/*" and there is a file "src/types.d.ts" and all non-dec files exists under /src/app/ then rootDir will be computed as /src/app/
+    // due to which all input files of /src/app/ will be directly emitted inside /dist/ (assuming outDir is ./dist)
+    // for example: input file /src/app/server.ts ---emitted--->  /dist/server.ts
+    // but maybe you wanted the path to be /dist/app/server.js, in that case you must specify rootDir:"./src"
+    "rootDir": "./src",
+
+    // emit configuration for tsc
+    "outDir": "./dist/server",  // this config has no effect currently we are using tsup instead of tsc
+    "target": "ES2022",
     "esModuleInterop": true,
+
+    // type checking
+    "strict": true,
     "skipLibCheck": true
   }
 }

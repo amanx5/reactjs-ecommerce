@@ -33,7 +33,7 @@ function stringifyLogElement(el: unknown) {
   return "\n" + str;
 }
 
-function prepareLogStatement(log: Log, hideLogLevel?: boolean) {
+function prepareLogText(log: Log, hideLogLevel?: boolean) {
   const { time, level, elements } = log;
   const logLevelName = LOG_LEVELS[level];
 
@@ -49,7 +49,7 @@ function prepareLogStatement(log: Log, hideLogLevel?: boolean) {
   return "\n" + timeStr + levelStr + messageStr + otherElementsStr;
 }
 
-export function addConsoleLog(level: LogLevel, elements: LogElements) {
+export function addConsoleLog(level: LogLevel, ...elements: LogElements) {
   switch (level) {
     case LOG_LEVELS.ERROR:
       console.error(...elements);
@@ -68,18 +68,19 @@ export async function addAppLog(
   elements: LogElements,
   printConsole: boolean,
 ) {
+  const log: Log = {
+    level,
+    elements,
+    time: getDateTimeStrForLogging(),
+  };
+  const logText = prepareLogText(log);
+
   if (printConsole) {
-    addConsoleLog(level, elements);
+    addConsoleLog(level, logText);
   }
 
   try {
-    const log: Log = {
-      level,
-      elements,
-      time: getDateTimeStrForLogging(),
-    };
-
-    await appendFile(paths.logsApp, prepareLogStatement(log));
+    await appendFile(paths.logsApp, logText);
   } catch (err) {
     addConsoleLog(LOG_LEVELS.ERROR, [
       "Error occured in updating `app.log` file.",
@@ -89,14 +90,15 @@ export async function addAppLog(
 }
 
 export async function addSqlLog(sql: string) {
+  const log: Log = {
+    level: LOG_LEVELS.INFO,
+    elements: [sql],
+    time: getDateTimeStrForLogging(),
+  };
+  const logText = prepareLogText(log, true);
+  
   try {
-    const log: Log = {
-      level: LOG_LEVELS.INFO,
-      elements: [sql],
-      time: getDateTimeStrForLogging(),
-    };
-
-    await appendFile(paths.logsSql, prepareLogStatement(log, true));
+    await appendFile(paths.logsSql, logText);
   } catch (err) {
     addConsoleLog(LOG_LEVELS.ERROR, [
       "Error occured in updating `sql.log` file.",

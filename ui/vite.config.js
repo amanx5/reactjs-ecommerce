@@ -33,7 +33,7 @@ function getViteConfig(configEnv) {
 
 	return {
 		build: {
-			outDir: path.resolve('../server/uiBuild'),
+			outDir: path.resolve('../server/dist/ui'),
 		},
 
 		plugins: [react()],

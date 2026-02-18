@@ -3,9 +3,7 @@
 	"private": true,
 	"scripts": {
 		"dev": "pnpm -r --parallel run dev",
-		"dev:ui": "pnpm -F ecommerce-ui dev",
-		"dev:server": "pnpm -F ecommerce-server dev",
-		"prod": "pnpm -r --parallel run build && pnpm -F ecommerce-server prod"
+		"prod": "pnpm -r --parallel run build && pnpm -F server prod"
 	},
 	"pnpm": {
 		"onlyBuiltDependencies": [
