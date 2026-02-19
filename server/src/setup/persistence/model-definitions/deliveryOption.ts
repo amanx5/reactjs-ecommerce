@@ -1,26 +1,20 @@
-import { sequelizeInstance } from "@/constants";
+import type { ModelDefinition } from ".";
 import { DataTypes } from "sequelize";
 
-const Order = sequelizeInstance.define(
-  "Order",
+export const DeliveryOptionModelDefinition = [
+  "DeliveryOption",
   {
     id: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING,
       primaryKey: true,
-      defaultValue: DataTypes.UUIDV4,
     },
-    orderTimeMs: {
-      type: DataTypes.BIGINT,
-      allowNull: false,
-    },
-    totalCostCents: {
+    deliveryDays: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    products: {
-      type: DataTypes.JSON,
+    priceCents: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: [],
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -32,9 +26,7 @@ const Order = sequelizeInstance.define(
     },
   },
   {
-    tableName: "orders",
+    tableName: "delivery_options",
     timestamps: true,
   },
-);
-
-export default Order;
+] as const satisfies ModelDefinition;

@@ -1,5 +1,11 @@
-import { cartRouter, ordersRouter, productsRouter, resetRouter } from "@/api";
+import {
+  getCartRouter,
+  getOrdersRouter,
+  getProductsRouter,
+  getResetRouter,
+} from "@/api";
 import { paths } from "@/constants";
+import type { DefinedModelsMap } from "@/setup/";
 import { addAppRequestLog } from "@/utils";
 import cors from "cors";
 import express, {
@@ -71,7 +77,7 @@ const uiDevelopmentMiddleware: RequestHandler = (req, res, next) => {
     // devUrl will handle all future requests
     res.redirect(uiDevUrl + req.originalUrl);
   } else {
-    const err = `"${uiDevUrlEnvKey}" is missing in environment file.`
+    const err = `"${uiDevUrlEnvKey}" is missing in environment file.`;
     res.locals.err = err;
     res.send(err);
   }
@@ -101,15 +107,19 @@ const errorMiddleware: ErrorRequestHandler = (err, req, res, next) => {
 //                                        ~~~~~~~~~~~~~~~~~~~~~~~~
 // - Any middleware which is bound to an instance of express.Router()
 // ******************************************************************************************************************
-const apiRouter = express.Router();
-apiRouter.use(apiPublicMiddleware);
-apiRouter.use("/cart", cartRouter);
-apiRouter.use("/orders", ordersRouter);
-apiRouter.use("/products", productsRouter);
-apiRouter.use("/reset", resetRouter);
+function getApiRouter(modelsMap: DefinedModelsMap) {
+  const apiRouter = express.Router();
+  apiRouter.use(apiPublicMiddleware);
+  apiRouter.use("/cart", getCartRouter(modelsMap));
+  apiRouter.use("/orders", getOrdersRouter(modelsMap));
+  apiRouter.use("/products", getProductsRouter(modelsMap));
+  apiRouter.use("/reset", getResetRouter(modelsMap));
+
+  return apiRouter;
+}
 
 export {
-  apiRouter,
+  getApiRouter,
   corsMiddleWare,
   errorMiddleware,
   imagesMiddleware,

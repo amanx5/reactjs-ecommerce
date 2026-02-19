@@ -10,3 +10,4 @@ export function isProduction() {
 export function isDevelopment() {
   return !isProduction();
 }
+

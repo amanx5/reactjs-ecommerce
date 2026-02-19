@@ -1,7 +1,7 @@
-import { sequelizeInstance } from "@/constants";
 import { DataTypes } from "sequelize";
+import type { ModelDefinition } from ".";
 
-const Product = sequelizeInstance.define(
+export const ProductModelDefinition = [
   "Product",
   {
     id: {
@@ -42,6 +42,5 @@ const Product = sequelizeInstance.define(
     tableName: "products",
     timestamps: true,
   },
-);
+] as const satisfies ModelDefinition;
 
-export default Product;

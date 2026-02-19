@@ -1,26 +1,31 @@
+import type { DefinedModelsMap } from "@/setup";
 import express from "express";
 
-const productsRouter = express.Router();
+export function getProductsRouter(modelsMap: DefinedModelsMap) {
+  const { Product } = modelsMap;
 
-// GET all products
-productsRouter.get("/", (req, res) => {
-  res.json({
-    message: "Get all products",
-    products: [],
+  const productsRouter = express.Router();
+
+  // GET all products
+  productsRouter.get("/", (req, res) => {
+    res.json({
+      message: "Get all products",
+      products: [],
+    });
   });
-});
 
-// GET product by ID
-productsRouter.get("/:id", (req, res) => {
-  res.json({
-    message: `Get product ${req.params.id}`,
-    product: null,
+  // GET product by ID
+  productsRouter.get("/:id", (req, res) => {
+    res.json({
+      message: `Get product ${req.params.id}`,
+      product: null,
+    });
   });
-});
 
-// POST create product (admin)
-productsRouter.post("/", (req, res) => {
-  res.json({ message: "Create product" });
-});
+  // POST create product (admin)
+  productsRouter.post("/", (req, res) => {
+    res.json({ message: "Create product" });
+  });
 
-export { productsRouter };
+  return productsRouter;
+}
