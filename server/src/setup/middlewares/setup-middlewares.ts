@@ -9,7 +9,7 @@ import {
   loggerMiddleware,
   notFoundMiddleware,
   uiBuildMiddleware,
-  uiBuildHtmlMiddleware,
+  uiProductionMiddleware,
   uiDevelopmentMiddleware,
 } from "./middlewares";
 import type { PersistenceHelpers } from "@/setup/";
@@ -39,7 +39,7 @@ export function setupMiddlewares(app: Express, psh: PersistenceHelpers) {
     // Serves static files requests (for CSS, JS, images files of UI build).
     app.use(uiBuildMiddleware);
     // Serve html file for all GET requests
-    app.get("*", uiBuildHtmlMiddleware);
+    app.get("*", uiProductionMiddleware);
   } else {
     // Redirect to UI Dev Server for all GET requests
     app.get("*", uiDevelopmentMiddleware);

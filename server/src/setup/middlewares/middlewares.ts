@@ -1,5 +1,6 @@
 import {
   getCartRouter,
+  getDeliveryOptionsRouter,
   getOrdersRouter,
   getProductsRouter,
   getResetRouter,
@@ -56,7 +57,7 @@ const loggerMiddleware: RequestHandler = (req, res, next) => {
   next();
 };
 
-const uiBuildHtmlMiddleware: RequestHandler = (req, res, next) => {
+const uiProductionMiddleware: RequestHandler = (req, res, next) => {
   // uiBuildHtml will handle all future requests if sendFile completes without error
   res.sendFile(paths.uiBuildHtml, onTransferCompleteOrError);
 
@@ -65,9 +66,9 @@ const uiBuildHtmlMiddleware: RequestHandler = (req, res, next) => {
       // transfer failed
       const isFileMissing = "code" in err && err.code === "ENOENT"; // ErrorNoENTry
       res.locals.err = err;
-      res.send(
-        isFileMissing ? "Webpage not Available" : "Something went wrong",
-      );
+      res
+        .status(400)
+        .send(isFileMissing ? "Webpage not Available" : "Something went wrong");
     }
   }
 };
@@ -79,7 +80,7 @@ const uiDevelopmentMiddleware: RequestHandler = (req, res, next) => {
   } else {
     const err = `"${uiDevUrlEnvKey}" is missing in environment file.`;
     res.locals.err = err;
-    res.send(err);
+    res.status(500).send(err);
   }
 };
 
@@ -111,6 +112,7 @@ function getApiRouter(modelsMap: DefinedModelsMap) {
   const apiRouter = express.Router();
   apiRouter.use(apiPublicMiddleware);
   apiRouter.use("/cart", getCartRouter(modelsMap));
+  apiRouter.use("/delivery-options", getDeliveryOptionsRouter(modelsMap));
   apiRouter.use("/orders", getOrdersRouter(modelsMap));
   apiRouter.use("/products", getProductsRouter(modelsMap));
   apiRouter.use("/reset", getResetRouter(modelsMap));
@@ -127,6 +129,6 @@ export {
   loggerMiddleware,
   notFoundMiddleware,
   uiBuildMiddleware,
-  uiBuildHtmlMiddleware,
   uiDevelopmentMiddleware,
+  uiProductionMiddleware,
 };

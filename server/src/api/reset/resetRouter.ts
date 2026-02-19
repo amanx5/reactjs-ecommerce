@@ -23,8 +23,8 @@ export function getResetRouter(modelsMap: DefinedModelsMap) {
         success: true,
         message: "Database reset successfully",
       });
-    } catch (error) {
-      res.locals.err = error;
+    } catch (err) {
+      res.locals.err = err;
       res.sendStatus(500);
     }
   });
