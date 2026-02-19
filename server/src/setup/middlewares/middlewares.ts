@@ -3,11 +3,12 @@ import {
   getDeliveryOptionsRouter,
   getOrdersRouter,
   getProductsRouter,
+  getExploreRouter,
   getResetRouter,
 } from "@/api";
 import { paths } from "@/constants";
 import type { DefinedModelsMap } from "@/setup/";
-import { addAppRequestLog } from "@/utils";
+import { addAppRequestLog, isDevelopment } from "@/utils";
 import cors from "cors";
 import express, {
   type RequestHandler,
@@ -110,12 +111,17 @@ const errorMiddleware: ErrorRequestHandler = (err, req, res, next) => {
 // ******************************************************************************************************************
 function getApiRouter(modelsMap: DefinedModelsMap) {
   const apiRouter = express.Router();
+
   apiRouter.use(apiPublicMiddleware);
   apiRouter.use("/cart", getCartRouter(modelsMap));
   apiRouter.use("/delivery-options", getDeliveryOptionsRouter(modelsMap));
   apiRouter.use("/orders", getOrdersRouter(modelsMap));
   apiRouter.use("/products", getProductsRouter(modelsMap));
-  apiRouter.use("/reset", getResetRouter(modelsMap));
+
+  if (isDevelopment()) {
+    apiRouter.use("/__explore", getExploreRouter(apiRouter));
+    apiRouter.use("/__reset", getResetRouter(modelsMap));
+  }
 
   return apiRouter;
 }
