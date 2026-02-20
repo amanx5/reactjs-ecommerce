@@ -21,6 +21,10 @@ export const CartItemSchema = [
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 1,
+      validate: {
+        min: 1,
+        max: 10,
+      },
     },
     deliveryOptionId: {
       type: DataTypes.STRING,

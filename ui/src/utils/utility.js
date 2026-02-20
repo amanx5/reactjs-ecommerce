@@ -62,7 +62,7 @@ export const refreshStateViaAPI = async function (
 		dataStateSetter(data);
 		return true;
 	} else if (error) {
-		errorStateSeter(error);
+		// errorStateSeter(error); // TODO: Uncomment
 		return false;
 	}
 };

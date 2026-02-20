@@ -20,7 +20,7 @@ export async function setupPersistence(): Promise<PersistenceHelpers> {
     await instance.authenticate();
     const modelsMap = defineModels(instance);
     // TODO: use migrations using Flyway in prod, instance.sync({ force: true }) should be only used in dev.
-    await instance.sync({ force: true });
+    // await instance.sync({ alter: true });
 
     // seed static tables
     await seedStaticTables(modelsMap);

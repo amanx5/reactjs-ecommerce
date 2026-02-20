@@ -22,6 +22,7 @@ export const getTotalCartItems = function (cart) {
 	}
 };
 
+// TODO: Show toast in success and failure
 export const addNewCartItem = async function (data) {
 	const { success } = await apiRequest('/api/cartItems', data, 'post');
 
