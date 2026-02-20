@@ -1,6 +1,6 @@
 import { FILE_PATHS } from "@/constants/";
 import { defineModels, type DefinedModelsMap, terminateServer } from "@/setup/";
-import { addAppLog, addSqlLog, LOG_LEVELS } from "@/utils/";
+import { addAppLog, addSqlLog, LOG_LEVELS, seedStaticTables } from "@/utils/";
 import { Sequelize } from "sequelize";
 
 export type PersistenceInstance = Sequelize;
@@ -19,15 +19,16 @@ export async function setupPersistence(): Promise<PersistenceHelpers> {
   try {
     await instance.authenticate();
     const modelsMap = defineModels(instance);
-    // TODO: use migrations using Flyway in prod, sync should be mostly used in dev.
-    await instance.sync();
+    // TODO: use migrations using Flyway in prod, instance.sync({ force: true }) should be only used in dev.
+    await instance.sync({ force: true });
 
-    const psh = {
+    // seed static tables
+    await seedStaticTables(modelsMap);
+
+    return {
       instance,
       modelsMap,
     };
-
-    return psh;
   } catch (err) {
     addAppLog(
       LOG_LEVELS.ERROR,

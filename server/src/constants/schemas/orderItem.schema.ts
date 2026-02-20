@@ -42,10 +42,6 @@ export const OrderItemSchema = [
       allowNull: false,
     },
 
-    priceAtPurchaseCents: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,

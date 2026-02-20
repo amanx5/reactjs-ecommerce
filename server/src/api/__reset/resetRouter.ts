@@ -1,16 +1,8 @@
-import {
-  cartItemsJson,
-  ordersJson,
-  orderItemsJson,
-  productsJson,
-  deliveryOptionsJson,
-} from "@/constants";
 import type { DefinedModelsMap } from "@/setup";
+import { resetDatabase } from "@/utils";
 import { Router, Request, Response, NextFunction } from "express";
 
 export function getResetRouter(modelsMap: DefinedModelsMap) {
-  const { CartItem, DeliveryOption, Order, OrderItem, Product } = modelsMap;
-
   const resetRouter = Router();
   resetRouter.post("/", reset);
 
@@ -18,18 +10,7 @@ export function getResetRouter(modelsMap: DefinedModelsMap) {
 
   async function reset(_req: Request, res: Response, next: NextFunction) {
     try {
-      // Clear existing data
-      await CartItem.destroy({ where: {}, truncate: true, force: true });
-      await Order.destroy({ where: {}, truncate: true, force: true });
-      await Product.destroy({ where: {}, truncate: true, force: true });
-      await DeliveryOption.destroy({ where: {}, truncate: true, force: true });
-
-      await CartItem.bulkCreate(cartItemsJson);
-      await DeliveryOption.bulkCreate(deliveryOptionsJson);
-      await Order.bulkCreate(ordersJson);
-      await OrderItem.bulkCreate(orderItemsJson);
-      await Product.bulkCreate(productsJson);
-
+      await resetDatabase(modelsMap);
       res.status(200).json({
         success: true,
         message: "Database reset successfully",

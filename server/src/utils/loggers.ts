@@ -21,32 +21,53 @@ function getDateTimeStrForLogging() {
   return new Date().toLocaleString();
 }
 
-function stringifyLogElement(el: unknown) {
-  let str;
-
-  if (el instanceof Error) {
-    str = el.stack;
-  } else {
-    str = JSON.stringify(el, null, 2);
-  }
-
-  return "\n" + str;
+function prepareErrorText(err: Error) {
+  const mainText = `${err.name}: ${err.message}`;
+  const stackText = err.stack && err.stack != mainText ? "\n" + err.stack : "";
+  return `${mainText}${stackText}`;
 }
 
-function prepareLogText(log: Log, hideLogLevel?: boolean) {
-  const { time, level, elements } = log;
+function prepareMetadataText(log: Log, hideLogLevel?: boolean) {
+  const { time, level } = log;
   const logLevelName = LOG_LEVELS[level];
 
   const timeStr = "[" + time + "] ";
   const levelStr = hideLogLevel ? "" : "[" + logLevelName + "] ";
+
+  return "\n" + timeStr + levelStr;
+}
+
+function prepareElementsText(log: Log) {
+  const { elements } = log;
   const messageStr = elements[0];
 
   const otherElementsStr =
-    elements.length > 1
-      ? elements.slice(1).map(stringifyLogElement).join("")
-      : "";
+    elements.length > 1 ? elements.slice(1).map(formatElement).join("") : "";
 
-  return "\n" + timeStr + levelStr + messageStr + otherElementsStr;
+  return messageStr + otherElementsStr;
+
+  function formatElement(el: unknown) {
+    let str;
+
+    try {
+      if (el instanceof Error) {
+        if (hasOriginalError(el)) {
+          str = "\nOriginal " + prepareErrorText(el.original);
+        }
+        str += "\n" + prepareErrorText(el);
+      } else {
+        str = JSON.stringify(el, null, 2);
+      }
+    } catch (err) {
+      str = "<error occured while stringifying log element>";
+    }
+
+    return str + "\n";
+  }
+}
+
+function hasOriginalError(obj: any): obj is { original: Error } {
+  return obj?.original instanceof Error;
 }
 
 export function addConsoleLog(level: LogLevel, ...elements: LogElements) {
@@ -73,14 +94,20 @@ export async function addAppLog(
     elements,
     time: getDateTimeStrForLogging(),
   };
-  const logText = prepareLogText(log);
+
+  const metadataText = prepareMetadataText(log);
+  const elementsText = prepareElementsText(log);
 
   if (printConsole) {
-    addConsoleLog(level, logText);
+    addConsoleLog(
+      level,
+      metadataText + elements[0] + "\n",
+      ...elements.slice(1),
+    );
   }
 
   try {
-    await appendFile(FILE_PATHS.logsApp, logText);
+    await appendFile(FILE_PATHS.logsApp, metadataText + elementsText);
   } catch (err) {
     addConsoleLog(LOG_LEVELS.ERROR, [
       "Error occured in updating `app.log` file.",
@@ -95,10 +122,11 @@ export async function addSqlLog(sql: string) {
     elements: [sql],
     time: getDateTimeStrForLogging(),
   };
-  const logText = prepareLogText(log, true);
+  const metadataText = prepareMetadataText(log, true);
+  const elementsText = prepareElementsText(log);
 
   try {
-    await appendFile(FILE_PATHS.logsSql, logText);
+    await appendFile(FILE_PATHS.logsSql, metadataText + elementsText);
   } catch (err) {
     addConsoleLog(LOG_LEVELS.ERROR, [
       "Error occured in updating `sql.log` file.",

@@ -17,11 +17,6 @@ export const OrderSchema = [
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    products: {
-      type: DataTypes.JSON,
-      allowNull: false,
-      defaultValue: [],
-    },
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
