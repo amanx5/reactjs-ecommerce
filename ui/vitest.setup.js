@@ -34,7 +34,7 @@ export const sampleAPIResponse = {
 			updatedAt: '2025-10-21T16:14:41.819Z',
 		},
 	],
-	'/api/payment-summary': {
+	'/api/paymentSummary': {
 		totalItems: 3,
 		productCostCents: 5294,
 		shippingCostCents: 0,

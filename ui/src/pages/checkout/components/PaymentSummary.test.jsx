@@ -10,7 +10,7 @@ import { getPriceNative } from '@/utils';
 import userEvent from '@testing-library/user-event';
 import axios from 'axios';
 
-const paymentSummaryAPI = '/api/payment-summary';
+const paymentSummaryAPI = '/api/paymentSummary';
 const paymentSummary = sampleAPIResponse[paymentSummaryAPI];
 const {
 	productCostCents,
@@ -54,17 +54,17 @@ describe('PaymentSummary', () => {
 						<PaymentSummary />
 					</CheckoutContext.Provider>
 				</MemoryRouter>
-			</AppContext.Provider>
+			</AppContext.Provider>,
 		);
 
 		productCostCentsEl = screen.getByTestId(
-			'payment-summary-productCostCents'
+			'payment-summary-productCostCents',
 		);
 		shippingCostCentsEl = screen.getByTestId(
-			'payment-summary-shippingCostCents'
+			'payment-summary-shippingCostCents',
 		);
 		totalCostBeforeTaxCentsEl = screen.getByTestId(
-			'payment-summary-totalCostBeforeTaxCents'
+			'payment-summary-totalCostBeforeTaxCents',
 		);
 		taxCentsEl = screen.getByTestId('payment-summary-taxCents');
 		totalCostCentsEl = screen.getByTestId('payment-summary-totalCostCents');
@@ -74,17 +74,17 @@ describe('PaymentSummary', () => {
 
 	it('should render all the charges correctly', () => {
 		expect(productCostCentsEl).toHaveTextContent(
-			getPriceNative(productCostCents)
+			getPriceNative(productCostCents),
 		);
 		expect(shippingCostCentsEl).toHaveTextContent(
-			getPriceNative(shippingCostCents)
+			getPriceNative(shippingCostCents),
 		);
 		expect(totalCostBeforeTaxCentsEl).toHaveTextContent(
-			getPriceNative(totalCostBeforeTaxCents)
+			getPriceNative(totalCostBeforeTaxCents),
 		);
 		expect(taxCentsEl).toHaveTextContent(getPriceNative(taxCents));
 		expect(totalCostCentsEl).toHaveTextContent(
-			getPriceNative(totalCostCents)
+			getPriceNative(totalCostCents),
 		);
 	});
 
@@ -96,9 +96,7 @@ describe('PaymentSummary', () => {
 
 		expect(axios.post).toHaveBeenCalledWith('/api/orders', null);
 
-		expect(axios.get).toHaveBeenCalledWith(
-			'/api/cart?expand=product'
-		);
+		expect(axios.get).toHaveBeenCalledWith('/api/cartItems?expand=product');
 
 		expect(setCart).toHaveBeenCalled();
 

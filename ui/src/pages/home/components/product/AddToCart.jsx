@@ -12,14 +12,15 @@ export default function AddToCart({ product, quantity }) {
 		<>
 			<div
 				ref={addedToCart}
-				style={{opacity: isAdded?1:0}}
-				className='added-to-cart'>
+				style={{ opacity: isAdded ? 1 : 0 }}
+				className='added-to-cart'
+			>
 				<img src='images/icons/checkmark.png' />
 				Added
 			</div>
 			<button
 				className='add-to-cart-button button-primary'
-				data-testid="AddToCart"
+				data-testid='AddToCart'
 				onClick={addToCartOnClick}
 			>
 				Add to Cart
@@ -35,11 +36,15 @@ export default function AddToCart({ product, quantity }) {
 
 		const isAdded = await addNewCartItem(data);
 		if (isAdded) {
-			refreshStateViaAPI('cart?expand=product', setCart, setError);
+			refreshStateViaAPI(
+				'/api/cartItems?expand=product',
+				setCart,
+				setError,
+			);
 			setIsAdded(true);
-			setTimeout(()=>{
+			setTimeout(() => {
 				setIsAdded(false);
-			}, 2000)
+			}, 2000);
 		}
 	}
 }

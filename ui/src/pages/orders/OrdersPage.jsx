@@ -9,7 +9,7 @@ export default function OrdersPage() {
 	const { setError } = useContext(AppContext);
 	const [orders, setOrders] = useState([]);
 	useEffect(() => {
-		refreshStateViaAPI('orders?expand=products', setOrders, setError);
+		refreshStateViaAPI('/api/orders?expand=products', setOrders, setError);
 	}, [setError]);
 
 	return (
@@ -22,7 +22,7 @@ export default function OrdersPage() {
 
 				<div className='orders-grid'>
 					{orders.map?.((order) => (
-						<Order key={order.id} order={order}/>
+						<Order key={order.id} order={order} />
 					))}
 				</div>
 			</div>

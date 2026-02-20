@@ -19,9 +19,9 @@ export default function HomePage() {
 		: 'No products found';
 
 	useEffect(() => {
-		const url = productSearch
-			? `products?search=${productSearch}`
-			: 'products';
+		const url =
+			'/api/products' + (productSearch ? '?search=' + productSearch : '');
+
 		refreshStateViaAPI(url, setProducts, setError);
 	}, [setError, productSearch]);
 

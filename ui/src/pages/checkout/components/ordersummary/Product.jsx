@@ -81,7 +81,7 @@ export default function Product() {
 		if (updateQuantityNew != '') {
 			if (isNaN(updateQuantityNewInt)) {
 				alert(
-					`Please select a valid quantity between ${QUANTITY_ADD_MIN_LIMIT_PER_REQUEST} and ${QUANTITY_ADD_MAX_LIMIT_PER_REQUEST}`
+					`Please select a valid quantity between ${QUANTITY_ADD_MIN_LIMIT_PER_REQUEST} and ${QUANTITY_ADD_MAX_LIMIT_PER_REQUEST}`,
 				);
 				return;
 			} else if (
@@ -89,12 +89,12 @@ export default function Product() {
 			) {
 				alert(
 					'Please select quantity greater than or equal to ' +
-						QUANTITY_ADD_MIN_LIMIT_PER_REQUEST
+						QUANTITY_ADD_MIN_LIMIT_PER_REQUEST,
 				);
 				return;
 			} else if (updateQuantityNewInt > stock) {
 				alert(
-					'Maximum quantity available for this product is ' + stock
+					'Maximum quantity available for this product is ' + stock,
 				);
 				return;
 			} else if (
@@ -102,7 +102,7 @@ export default function Product() {
 			) {
 				alert(
 					'Please select quantity less than or equal to ' +
-						QUANTITY_ADD_MAX_LIMIT_PER_REQUEST
+						QUANTITY_ADD_MAX_LIMIT_PER_REQUEST,
 				);
 				return;
 			}
@@ -159,14 +159,14 @@ export default function Product() {
 
 	async function refreshCartAndPaymentSummary() {
 		const isCartRefreshed = await refreshStateViaAPI(
-			'cart?expand=product',
+			'/api/cartItems?expand=product',
 			setCart,
-			setError
+			setError,
 		);
 		const isPaymentSummaryRefreshed = await refreshStateViaAPI(
-			'payment-summary',
+			'/api/paymentSummary',
 			setPaymentSummary,
-			setError
+			setError,
 		);
 
 		return { isCartRefreshed, isPaymentSummaryRefreshed };

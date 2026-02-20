@@ -14,7 +14,7 @@ export default function CheckoutPage() {
 	const [paymentSummary, setPaymentSummary] = useState(null);
 
 	useEffect(() => {
-		refreshStateViaAPI('payment-summary', setPaymentSummary, setError);
+		refreshStateViaAPI('/api/paymentSummary', setPaymentSummary, setError);
 	}, [setError]);
 
 	return (

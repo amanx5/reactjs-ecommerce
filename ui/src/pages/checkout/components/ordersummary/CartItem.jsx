@@ -11,12 +11,16 @@ export default function CartItem({ cartItem }) {
 	const [deliveryOptions, setDeliveryOptions] = useState([]);
 
 	useEffect(() => {
-		refreshStateViaAPI('delivery-options?expand=estimatedDeliveryTime', setDeliveryOptions, setError);
+		refreshStateViaAPI(
+			'/api/deliveryOptions?expand=estimatedDeliveryTime',
+			setDeliveryOptions,
+			setError,
+		);
 	}, [setError]);
 
 	return (
 		<CartItemContext.Provider
-			value={{cartItem, deliveryOptions, setDeliveryOptions}}
+			value={{ cartItem, deliveryOptions, setDeliveryOptions }}
 		>
 			<div className='cart-item-container'>
 				<DeliveryDate />

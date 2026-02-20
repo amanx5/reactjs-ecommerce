@@ -3,10 +3,10 @@ import AppContext from '@/context/AppContext';
 import { addNewCartItem, refreshStateViaAPI } from '@/utils';
 import { useContext } from 'react';
 
-export default function BuyAgain({product, quantity}) {
-    const { id } = product;
-    const { setCart, setError } = useContext(AppContext);
-    
+export default function BuyAgain({ product, quantity }) {
+	const { id } = product;
+	const { setCart, setError } = useContext(AppContext);
+
 	return (
 		<button
 			className='buy-again-button button-primary'
@@ -25,7 +25,11 @@ export default function BuyAgain({product, quantity}) {
 
 		const isAdded = await addNewCartItem(data);
 		if (isAdded) {
-			refreshStateViaAPI('cart?expand=product', setCart, setError);
+			refreshStateViaAPI(
+				'/api/cartItems?expand=product',
+				setCart,
+				setError,
+			);
 		}
 	}
 }

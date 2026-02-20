@@ -12,10 +12,10 @@ export const getCheckoutHeading = function (cart) {
 	} else {
 		return 'Failed to load cart.';
 	}
-}
+};
 
 export const getTotalCartItems = function (cart) {
-	if ((Array.isArray(cart))) {
+	if (Array.isArray(cart)) {
 		return cart.reduce((acc, curr) => (acc += curr.quantity), 0);
 	} else {
 		return 0;
@@ -23,7 +23,7 @@ export const getTotalCartItems = function (cart) {
 };
 
 export const addNewCartItem = async function (data) {
-	const { success } = await apiRequest('cart', data, 'post');
+	const { success } = await apiRequest('/api/cartItems', data, 'post');
 
 	if (success) {
 		return true;
@@ -31,8 +31,11 @@ export const addNewCartItem = async function (data) {
 };
 
 export const deleteCartItem = async function (productId) {
-	const api = `cart/${productId}`;
-	const { success } = await apiRequest(api, null, 'delete');
+	const { success } = await apiRequest(
+		`/api/cartItems/${productId}`,
+		null,
+		'delete',
+	);
 
 	if (success) {
 		return true;
@@ -41,15 +44,17 @@ export const deleteCartItem = async function (productId) {
 
 export const updateDeliveryOption = async function (
 	deliveryOptionId,
-	productId
+	productId,
 ) {
 	const data = {
 		deliveryOptionId,
 	};
 
-	const api = `cart/${productId}`;
-
-	const { success } = await apiRequest(api, data, 'put');
+	const { success } = await apiRequest(
+		`/api/cartItems/${productId}`,
+		data,
+		'put',
+	);
 
 	if (success) {
 		return true;
@@ -57,8 +62,7 @@ export const updateDeliveryOption = async function (
 };
 
 export const placeOrder = async function () {
-	const api = `orders`;
-	const { success } = await apiRequest(api, null, 'post');
+	const { success } = await apiRequest('/api/orders', null, 'post');
 
 	if (success) {
 		return true;

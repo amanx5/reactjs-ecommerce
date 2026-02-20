@@ -1,16 +1,14 @@
 import axios from 'axios';
 
-
 export const APP_CONSTANTS = {
 	QUANTITY_ADD_MIN_LIMIT_PER_REQUEST: 0,
-	QUANTITY_ADD_MAX_LIMIT_PER_REQUEST: 10
-}
-
+	QUANTITY_ADD_MAX_LIMIT_PER_REQUEST: 10,
+};
 
 /**
  * Makes an HTTP request to the given API endpoint using Axios.
  *
- * @param {string} api - The API endpoint (relative to '/api/'). Required.
+ * @param {string} url - The API endpoint URL
  * @param {Object|null} [data=null] - The request payload. Optional for GET and DELETE requests.
  * @param {'get'|'post'|'put'|'delete'} [method='get'] - HTTP method to use.
  * @returns {Promise<{ data: any, error: any, success: boolean }>}
@@ -18,16 +16,14 @@ export const APP_CONSTANTS = {
  *          an error (if any occurred), and a success flag.
  *
  * @example
- * const { success, data, error } = await apiRequest('cart', { productId: 'abc', quantity: 2 }, 'post');
+ * const { success, data, error } = await apiRequest('/api/cartItems', { productId: 'abc', quantity: 2 }, 'post');
  */
-export const apiRequest = async function (api, data, method = 'get') {
-	const result = { success: null, data: null, error: null };
-	if (!api) {
-		warnDev('Request not sent. [api param is missing]');
+export const apiRequest = async function (url, data, method = 'get') {
+	let result = { success: null, data: null, error: null };
+	if (!url) {
+		warnDev('Request not sent. [url param is missing]');
 		return result;
 	}
-
-	const url = '/api/' + api;
 
 	try {
 		let response;
@@ -41,8 +37,7 @@ export const apiRequest = async function (api, data, method = 'get') {
 			response = await axios.get(url);
 		}
 
-		result.data = response.data;
-		result.success = true;
+		result = response.data;
 	} catch (error) {
 		console.error(error);
 		result.error = error;
@@ -52,7 +47,11 @@ export const apiRequest = async function (api, data, method = 'get') {
 	return result;
 };
 
-export const refreshStateViaAPI = async function (api, dataStateSetter, errorStateSeter) {
+export const refreshStateViaAPI = async function (
+	api,
+	dataStateSetter,
+	errorStateSeter,
+) {
 	if (!dataStateSetter || !errorStateSeter) {
 		warnDev('Request not sent. [Setter param is missing]');
 		return;
@@ -72,8 +71,8 @@ export const warnDev = async function (msg) {
 	if (isDevMode()) {
 		console.warn(msg);
 	}
-}
+};
 
 export const isDevMode = function () {
 	return import.meta.env.MODE !== 'production';
-}
+};

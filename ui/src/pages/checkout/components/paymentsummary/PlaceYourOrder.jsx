@@ -20,7 +20,11 @@ export default function PlaceYourOrder() {
 	async function placeOrderOnClick(event) {
 		const isOrderPlaced = await placeOrder();
 		if (isOrderPlaced) {
-			refreshStateViaAPI('cart?expand=product', setCart, setError);
+			refreshStateViaAPI(
+				'/api/cartItems?expand=product',
+				setCart,
+				setError,
+			);
 			navigate('/orders');
 		}
 	}

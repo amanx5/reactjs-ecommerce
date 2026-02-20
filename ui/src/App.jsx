@@ -16,11 +16,13 @@ export default function App() {
 	const [cart, setCart] = useState(null);
 
 	useEffect(() => {
-		refreshStateViaAPI('cart?expand=product', setCart, setError);
+		refreshStateViaAPI('/api/cartItems?expand=product', setCart, setError);
 	}, []);
 
 	return (
-		<AppContext.Provider value={{ error, setError, cart, setCart, APP_CONSTANTS }}>
+		<AppContext.Provider
+			value={{ error, setError, cart, setCart, APP_CONSTANTS }}
+		>
 			{error ? (
 				<ErrorPage />
 			) : (

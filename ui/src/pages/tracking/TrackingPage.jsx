@@ -15,7 +15,7 @@ export default function TrackingPage() {
 
 	useEffect(() => {
 		refreshStateViaAPI(
-			`orders/${orderId}?expand=products`,
+			`/api/orders/${orderId}?expand=products`,
 			setOrder,
 			setError
 		);

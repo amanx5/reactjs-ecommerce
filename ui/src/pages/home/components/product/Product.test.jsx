@@ -12,8 +12,8 @@ vi.mock('axios');
 describe('Product component in HomePage', () => {
 	const setCart = vi.fn();
 	const setError = vi.fn();
-	const cartGetAPI = '/api/cart?expand=product';
-	const cartPostAPI = '/api/cart';
+	const cartGetAPI = '/api/cartItems?expand=product';
+	const cartPostAPI = '/api/cartItems';
 	const product = {
 		keywords: ['socks', 'sports', 'apparel'],
 		id: 'e43638ce-6aa0-4b85-b27f-e1d07eb678c6',
@@ -43,7 +43,7 @@ describe('Product component in HomePage', () => {
 		});
 
 		user = userEvent.setup();
-        
+
 		// resets all previous calls and results of mock setCart
 		setCart.mockClear();
 
@@ -52,11 +52,11 @@ describe('Product component in HomePage', () => {
 		render(
 			<AppContext.Provider value={{ setCart, setError }}>
 				<Product product={product} />
-			</AppContext.Provider>
+			</AppContext.Provider>,
 		);
 
 		quantitySelectorContainer = screen.getByTestId(
-			'product-quantity-container'
+			'product-quantity-container',
 		);
 		quantitySelector =
 			quantitySelectorContainer.getElementsByTagName('select')[0];
@@ -65,21 +65,21 @@ describe('Product component in HomePage', () => {
 	it('displays product details correctly', () => {
 		expect(
 			// searches for element inside the fake webpage with text passed in params
-			screen.getByText(product.name)
+			screen.getByText(product.name),
 		).toBeInTheDocument(); // added by jest-dom, checkes whether the element in the document
 
 		expect(
-			screen.getByText(getPriceNative(product.priceCents))
+			screen.getByText(getPriceNative(product.priceCents)),
 		).toBeInTheDocument();
 
 		expect(screen.getByTestId('product-image')).toHaveAttribute(
 			'src',
-			product.image
+			product.image,
 		);
 
 		expect(screen.getByTestId('product-rating-stars')).toHaveAttribute(
 			'src',
-			`images/ratings/rating-${product.rating.stars * 10}.png`
+			`images/ratings/rating-${product.rating.stars * 10}.png`,
 		);
 
 		expect(screen.getByText(product.rating.count)).toBeInTheDocument();

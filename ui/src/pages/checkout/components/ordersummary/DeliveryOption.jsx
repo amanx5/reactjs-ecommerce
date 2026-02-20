@@ -41,8 +41,16 @@ export default function DeliveryOption({ deliveryOption }) {
 	async function deliveryOptionOnChange(event) {
 		const isUpdated = await updateDeliveryOption(id, productId);
 		if (isUpdated) {
-			refreshStateViaAPI('cart?expand=product', setCart, setError);
-			refreshStateViaAPI('payment-summary', setPaymentSummary, setError);
+			refreshStateViaAPI(
+				'/api/cartItems?expand=product',
+				setCart,
+				setError,
+			);
+			refreshStateViaAPI(
+				'/api/paymentSummary',
+				setPaymentSummary,
+				setError,
+			);
 		}
 	}
 }

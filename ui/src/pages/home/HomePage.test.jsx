@@ -26,7 +26,7 @@ describe('HomePage component', () => {
 					{/* homepage has header which has Link comps, which will break without router so memory router is added for tests */}
 					<HomePage />
 				</MemoryRouter>
-			</AppContext.Provider>
+			</AppContext.Provider>,
 		);
 		user = userEvent.setup();
 		productContainers = await screen.findAllByTestId('product-container');
@@ -43,10 +43,10 @@ describe('HomePage component', () => {
 	it('displays all the product details correctly', async () => {
 		expect(productContainers.length).toBe(products.length);
 		expect(
-			firstProductContainer.getByText(products[0].name)
+			firstProductContainer.getByText(products[0].name),
 		).toBeInTheDocument();
 		expect(
-			secondProductContainer.getByText(products[1].name)
+			secondProductContainer.getByText(products[1].name),
 		).toBeInTheDocument();
 	});
 
@@ -58,7 +58,7 @@ describe('HomePage component', () => {
 
 	it('updates the cart on clicking addtocart of the product', async () => {
 		const getParamsToCallCartPostAPI = (productIndex) => [
-			'/api/cart',
+			'/api/cartItems',
 			{
 				productId: products[productIndex].id,
 				quantity: 1,
@@ -70,11 +70,11 @@ describe('HomePage component', () => {
 
 		expect(axios.post).toHaveBeenNthCalledWith(
 			1,
-			...getParamsToCallCartPostAPI(0)
+			...getParamsToCallCartPostAPI(0),
 		);
 		expect(axios.post).toHaveBeenNthCalledWith(
 			2,
-			...getParamsToCallCartPostAPI(1)
+			...getParamsToCallCartPostAPI(1),
 		);
 
 		expect(setCart).toHaveBeenCalledTimes(2);
