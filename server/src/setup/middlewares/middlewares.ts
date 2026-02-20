@@ -6,7 +6,7 @@ import {
   getExploreRouter,
   getResetRouter,
 } from "@/api";
-import { paths } from "@/constants";
+import { FILE_PATHS } from "@/constants";
 import type { DefinedModelsMap } from "@/setup/";
 import { addAppRequestLog, isDevelopment } from "@/utils";
 import cors from "cors";
@@ -40,9 +40,9 @@ const corsMiddleWare = cors({
 // - `express.static` serves static files & doesn't propagate when request URL matches with `root` directory argument
 // ******************************************************************************************************************
 const jsonMiddleware = express.json();
-const apiPublicMiddleware = express.static(paths.apiPublic);
-const imagesMiddleware = express.static(paths.images);
-const uiBuildMiddleware = express.static(paths.uiBuild);
+const apiPublicMiddleware = express.static(FILE_PATHS.apiPublic);
+const imagesMiddleware = express.static(FILE_PATHS.images);
+const uiBuildMiddleware = express.static(FILE_PATHS.uiBuild);
 
 //
 // ******************************************************************************************************************
@@ -58,9 +58,9 @@ const loggerMiddleware: RequestHandler = (req, res, next) => {
   next();
 };
 
-const uiProductionMiddleware: RequestHandler = (req, res, next) => {
+const uiProductionMiddleware: RequestHandler = (_req, res, _next) => {
   // uiBuildHtml will handle all future requests if sendFile completes without error
-  res.sendFile(paths.uiBuildHtml, onTransferCompleteOrError);
+  res.sendFile(FILE_PATHS.uiBuildHtml, onTransferCompleteOrError);
 
   function onTransferCompleteOrError(err: Error) {
     if (err && !res.headersSent) {
@@ -74,7 +74,7 @@ const uiProductionMiddleware: RequestHandler = (req, res, next) => {
   }
 };
 
-const uiDevelopmentMiddleware: RequestHandler = (req, res, next) => {
+const uiDevelopmentMiddleware: RequestHandler = (req, res, _next) => {
   if (uiDevUrl) {
     // devUrl will handle all future requests
     res.redirect(uiDevUrl + req.originalUrl);
@@ -85,7 +85,7 @@ const uiDevelopmentMiddleware: RequestHandler = (req, res, next) => {
   }
 };
 
-const notFoundMiddleware: RequestHandler = (req, res, next) => {
+const notFoundMiddleware: RequestHandler = (_req, res, _next) => {
   res.sendStatus(404);
 };
 
@@ -98,13 +98,14 @@ const notFoundMiddleware: RequestHandler = (req, res, next) => {
 // - It must be added without a path
 // - It must be last
 // ******************************************************************************************************************
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const errorMiddleware: ErrorRequestHandler = (err, req, res, next) => {
   res.locals.err = err;
   res.sendStatus(500);
 };
 
 //
-// ******************************************************************************************************************
+// *************************************************************************************************0*****************
 //                                        Router-level middlewares
 //                                        ~~~~~~~~~~~~~~~~~~~~~~~~
 // - Any middleware which is bound to an instance of express.Router()

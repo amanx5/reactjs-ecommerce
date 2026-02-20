@@ -6,7 +6,7 @@ export function getCartItemsRouter(modelsMap: DefinedModelsMap) {
   const cartItemsRouter = express.Router();
 
   // GET cart
-  cartItemsRouter.get("/", async (req, res, next) => {
+  cartItemsRouter.get("/", async (_req, res) => {
     const items = await CartItem.findAll();
     res.json({
       success: "true",

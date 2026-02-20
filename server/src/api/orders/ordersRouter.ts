@@ -1,9 +1,7 @@
 import type { DefinedModelsMap } from "@/setup";
 import express from "express";
 
-export function getOrdersRouter(modelsMap: DefinedModelsMap) {
-  const { Order } = modelsMap;
-
+export function getOrdersRouter(_modelsMap: DefinedModelsMap) {
   const ordersRouter = express.Router();
 
   // GET all orders

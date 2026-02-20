@@ -83,7 +83,7 @@ function getEndpoints(layerHandler: ILayerHandler, prefix: string): Endpoint[] {
       );
 
       for (const method of methods) {
-        let routePath = layer.route.path === "/" ? "" : layer.route.path;
+        const routePath = layer.route.path === "/" ? "" : layer.route.path;
 
         endpoints.push({
           method,

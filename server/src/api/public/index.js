@@ -19,10 +19,13 @@ async function hit(method, url) {
     const res = await fetch(url, { method });
     const text = await res.text();
 
-    let display = text;
+    let display;
     try {
       display = JSON.stringify(JSON.parse(text), null, 2);
-    } catch {}
+    } catch {
+      // Ignore parse errors, use raw text
+      display = text;
+    }
 
     status.textContent = `${res.status} ${res.statusText}`;
     status.style.color = res.ok ? "#4ade80" : "#f87171";

@@ -23,7 +23,7 @@ export const absolutePathExperimental = (input: string) => {
     undefined,
     // override `fileExists`, to resolve directories path like "~/dist/ui/" (by default this will not resolve since file extension is not present)
     // It has one drawback that now files existence will not be checked as well
-    (name) => true,
+    (_name) => true,
   );
 
   if (!resolved) {

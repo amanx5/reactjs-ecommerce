@@ -1,4 +1,4 @@
-import { paths } from "@/constants/";
+import { FILE_PATHS } from "@/constants/";
 import { defineModels, type DefinedModelsMap, terminateServer } from "@/setup/";
 import { addAppLog, addSqlLog, LOG_LEVELS } from "@/utils/";
 import { Sequelize } from "sequelize";
@@ -12,7 +12,7 @@ export type PersistenceHelpers = {
 export async function setupPersistence(): Promise<PersistenceHelpers> {
   const instance = new Sequelize({
     dialect: "sqlite",
-    storage: paths.database,
+    storage: FILE_PATHS.database,
     logging: addSqlLog,
   });
 

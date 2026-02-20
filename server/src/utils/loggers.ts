@@ -1,4 +1,4 @@
-import { paths } from "@/constants";
+import { FILE_PATHS } from "@/constants";
 import { appendFile } from "node:fs/promises";
 import { Request, Response } from "express";
 
@@ -80,7 +80,7 @@ export async function addAppLog(
   }
 
   try {
-    await appendFile(paths.logsApp, logText);
+    await appendFile(FILE_PATHS.logsApp, logText);
   } catch (err) {
     addConsoleLog(LOG_LEVELS.ERROR, [
       "Error occured in updating `app.log` file.",
@@ -96,9 +96,9 @@ export async function addSqlLog(sql: string) {
     time: getDateTimeStrForLogging(),
   };
   const logText = prepareLogText(log, true);
-  
+
   try {
-    await appendFile(paths.logsSql, logText);
+    await appendFile(FILE_PATHS.logsSql, logText);
   } catch (err) {
     addConsoleLog(LOG_LEVELS.ERROR, [
       "Error occured in updating `sql.log` file.",

@@ -1,9 +1,7 @@
 import type { DefinedModelsMap } from "@/setup";
 import express from "express";
 
-export function getProductsRouter(modelsMap: DefinedModelsMap) {
-  const { Product } = modelsMap;
-
+export function getProductsRouter(_modelsMap: DefinedModelsMap) {
   const productsRouter = express.Router();
 
   // GET all products
