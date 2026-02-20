@@ -1,42 +1,59 @@
-async function hit(method, url) {
-  const panel = document.getElementById("response-panel");
-  const empty = document.getElementById("response-empty");
-  const status = document.getElementById("response-status");
-  const urlEl = document.getElementById("response-url");
+async function prepareHit(method, url) {
+  const reqPanel = document.getElementById("request-panel");
+  const resEmpty = document.getElementById("response-empty");
+  const resPanel = document.getElementById("response-panel");
+  const methodEl = document.getElementById("request-method");
+  const urlInput = document.getElementById("request-url-input");
+  const sendBtn = document.getElementById("send-btn");
   const body = document.getElementById("response-body");
+  const status = document.getElementById("response-status");
 
-  // Show panel, hide empty state
-  panel.classList.add("visible");
-  empty.classList.add("hidden");
+  resEmpty.classList.add("hidden");
+  reqPanel.classList.add("visible");
+  resPanel.classList.remove("visible"); // Hide response panel until 'Send' is clicked
 
-  status.textContent = "…";
-  status.style.color = "#64748b";
-  urlEl.textContent = `${method} ${url}`;
-  body.textContent = "Loading…";
-  body.className = "loading";
+  methodEl.textContent = method;
+  methodEl.className = `badge ${method}`;
+  urlInput.value = url;
+  status.textContent = "";
 
-  try {
-    const res = await fetch(url, { method });
-    const text = await res.text();
+  const onSend = async () => {
+    resPanel.classList.add("visible"); // Show response panel on send
+    body.textContent = "Loading…";
+    body.className = "loading";
+    status.textContent = "…";
+    status.style.color = "#64748b";
 
-    let display;
     try {
-      display = JSON.stringify(JSON.parse(text), null, 2);
-    } catch {
-      // Ignore parse errors, use raw text
-      display = text;
-    }
+      const currentUrl = urlInput.value;
+      const res = await fetch(currentUrl, { method });
+      const text = await res.text();
 
-    status.textContent = `${res.status} ${res.statusText}`;
-    status.style.color = res.ok ? "#4ade80" : "#f87171";
-    body.textContent = display;
-    body.className = "";
-  } catch (err) {
-    status.textContent = "Error";
-    status.style.color = "#f87171";
-    body.textContent = String(err);
-    body.className = "";
-  }
+      let display;
+      try {
+        display = JSON.stringify(JSON.parse(text), null, 2);
+      } catch {
+        display = text;
+      }
+
+      status.textContent = `${res.status} ${res.statusText}`;
+      status.style.color = res.ok ? "#4ade80" : "#f87171";
+      body.textContent = display;
+      body.className = "";
+    } catch (err) {
+      status.textContent = "Error";
+      status.style.color = "#f87171";
+      body.textContent = String(err);
+      body.className = "";
+    }
+  };
+
+  sendBtn.onclick = onSend;
+  urlInput.onkeydown = (e) => {
+    if (e.key === "Enter") {
+      onSend();
+    }
+  };
 }
 
 async function init() {
@@ -56,6 +73,9 @@ function renderRoutes(groups) {
 
   if (!container || !groupTemplate || !endpointTemplate) return;
 
+  // Clear existing (if any)
+  container.innerHTML = "";
+
   groups.forEach((group) => {
     const groupFragment = groupTemplate.content.cloneNode(true);
     groupFragment.querySelector(".group-label").textContent = group.name;
@@ -70,7 +90,7 @@ function renderRoutes(groups) {
       badge.textContent = ep.method;
       badge.classList.add(ep.method);
       pathSpan.textContent = ep.path;
-      a.onclick = () => hit(ep.method, ep.path);
+      a.onclick = () => prepareHit(ep.method, ep.path);
 
       ul.appendChild(epFragment);
     });

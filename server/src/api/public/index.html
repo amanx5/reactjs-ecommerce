@@ -18,13 +18,23 @@
 
       <!-- RIGHT: response panel -->
       <section class="response-col">
+        <div id="request-panel">
+          <div class="panel-header">Request Config</div>
+          <div class="request-row">
+            <span id="request-method" class="badge"></span>
+            <input type="text" id="request-url-input" />
+            <button id="send-btn">Send</button>
+          </div>
+        </div>
+
         <div id="response-panel">
-          <div id="response-header">
+          <div class="panel-header">
+            <span>Response</span>
             <span id="response-status"></span>
-            <span id="response-url"></span>
           </div>
           <pre id="response-body"></pre>
         </div>
+
         <div id="response-empty">
           <span>← click an endpoint to test</span>
         </div>

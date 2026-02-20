@@ -30,13 +30,11 @@ export type RouteGroup = {
 
 export function getRouterGroups(router: Router): RouteGroup[] {
   const groups: RouteGroup[] = [];
-
   if (!router || !router.stack) return groups;
 
   router.stack.forEach((layer) => {
-    // Check for router mounted with a path
     if (layer.name === "router" && layer.regexp) {
-      const path = getPathFromRegexp(layer.regexp);
+      const path = getPathFromLayer(layer);
       if (path && path !== "/") {
         const name = formatGroupName(path);
         const endpoints = getEndpoints(layer.handle, path);
@@ -50,16 +48,19 @@ export function getRouterGroups(router: Router): RouteGroup[] {
   return groups;
 }
 
-function getPathFromRegexp(regexp: RegExp): string {
-  const source = regexp.source;
-  // Express router mounting regex usually looks like: ^\/path\/?(?=\/|$)
+function getPathFromLayer(layer: ILayer): string {
+  if (layer.route && typeof layer.route.path === "string")
+    return layer.route.path;
+
+  const source = layer.regexp.source;
   const match = source.match(/^\^\\(\/[^\\?]*)/);
-  return match ? match[1] : "";
+  return match ? match[1].replace(/\\/g, "") : "";
 }
 
 function formatGroupName(path: string): string {
-  return path
-    .slice(1)
+  const parts = path.split("/").filter((p) => p && !p.startsWith(":"));
+  const name = parts[0] || "General";
+  return name
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
@@ -84,12 +85,18 @@ function getEndpoints(layerHandler: ILayerHandler, prefix: string): Endpoint[] {
 
       for (const method of methods) {
         const routePath = layer.route.path === "/" ? "" : layer.route.path;
+        const fullPath = `/api${prefix}${routePath}`;
 
         endpoints.push({
           method,
-          path: `/api${prefix}${routePath}`,
+          path: fullPath,
         });
       }
+    } else if (layer.name === "router") {
+      // Recurse into nested routers
+      const subPrefix = getPathFromLayer(layer);
+      const subEndpoints = getEndpoints(layer.handle, `${prefix}${subPrefix}`);
+      endpoints.push(...subEndpoints);
     }
   }
 
