@@ -11,7 +11,7 @@ export function getResetRouter(modelsMap: DefinedModelsMap) {
   async function reset(_req: Request, res: Response, next: NextFunction) {
     try {
       await resetDatabase(modelsMap);
-      success(res, "Database reset successfully");
+      success(res, 200, "Database reset successfully");
     } catch (err) {
       failure(next, "Failed to reset database", err);
     }

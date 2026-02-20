@@ -35,7 +35,7 @@ export function getProductsRouter(modelsMap: DefinedModelsMap) {
 
       const products = await Product.findAll({ where });
 
-      success(res, "Products fetched successfully", products);
+      success(res, 200, "Products fetched successfully", products);
     } catch (err) {
       failure(next, "Failed to fetch products", err);
     }

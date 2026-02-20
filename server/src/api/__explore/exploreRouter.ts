@@ -10,6 +10,7 @@ export function getExploreRouter(apiRouter: Router) {
     try {
       success(
         res,
+        200,
         "API endpoints derived successfully.",
         getRouterGroups(apiRouter),
       );

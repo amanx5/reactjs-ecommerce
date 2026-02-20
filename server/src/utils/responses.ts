@@ -1,7 +1,13 @@
+import type { HttpStatus } from "@/constants";
 import { type Response, type NextFunction } from "express";
 
-export function success(res: Response, clientMessage: string, data?: unknown) {
-  return res.json({
+export function success(
+  res: Response,
+  status: HttpStatus,
+  clientMessage: string,
+  data?: unknown,
+) {
+  return res.status(status).json({
     success: true,
     message: clientMessage,
     data,

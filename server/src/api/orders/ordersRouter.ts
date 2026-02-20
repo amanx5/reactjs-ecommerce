@@ -10,15 +10,15 @@ export function getOrdersRouter(_modelsMap: DefinedModelsMap) {
   ordersRouter.post("/", createOrder);
 
   async function getAllOrders(_req: Request, res: Response) {
-    success(res, "Orders fetched successfully", []);
+    success(res, 200, "Orders fetched successfully", []);
   }
 
   async function getOrderById(req: Request, res: Response) {
-    success(res, `Order ${req.params.id} fetched successfully`, null);
+    success(res, 200, `Order ${req.params.id} fetched successfully`, null);
   }
 
   async function createOrder(_req: Request, res: Response) {
-    success(res, "Order created successfully", null);
+    success(res, 201, "Order created successfully", null);
   }
 
   return ordersRouter;

@@ -19,7 +19,7 @@ export function getDeliveryOptionsRouter(modelsMap: DefinedModelsMap) {
   ) {
     try {
       const deliveryOptions = await DeliveryOption.findAll();
-      success(res, "Delivery options fetched successfully", deliveryOptions);
+      success(res, 200, "Delivery options fetched successfully", deliveryOptions);
     } catch (err) {
       failure(next, "Failed to fetch delivery options", err);
     }
@@ -35,7 +35,7 @@ export function getDeliveryOptionsRouter(modelsMap: DefinedModelsMap) {
         req.params.id as string,
       );
       if (deliveryOption) {
-        success(res, "Delivery option fetched successfully", deliveryOption);
+        success(res, 200, "Delivery option fetched successfully", deliveryOption);
       } else {
         failure(next, "Delivery option doesn't exist with given id");
       }
