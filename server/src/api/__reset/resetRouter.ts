@@ -5,13 +5,17 @@ import {
   deliveryOptionsJson,
 } from "@/constants";
 import type { DefinedModelsMap } from "@/setup";
-import { Router } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 
 export function getResetRouter(modelsMap: DefinedModelsMap) {
   const { CartItem, DeliveryOption, Order, Product } = modelsMap;
-  const resetRouter = Router();
 
-  resetRouter.post("/", async (req, res, next) => {
+  const resetRouter = Router();
+  resetRouter.post("/", reset);
+
+  return resetRouter;
+
+  async function reset(_req: Request, res: Response, next: NextFunction) {
     try {
       // Clear existing data
       await CartItem.destroy({ where: {}, truncate: true, force: true });
@@ -29,9 +33,7 @@ export function getResetRouter(modelsMap: DefinedModelsMap) {
         message: "Database reset successfully",
       });
     } catch (err) {
-      next(err)
+      next(err);
     }
-  });
-
-  return resetRouter;
+  }
 }

@@ -1,4 +1,4 @@
-async function prepareHit(method, url) {
+async function prepareHit(method, url, examples = []) {
   const reqPanel = document.getElementById("request-panel");
   const resEmpty = document.getElementById("response-empty");
   const resPanel = document.getElementById("response-panel");
@@ -7,6 +7,7 @@ async function prepareHit(method, url) {
   const sendBtn = document.getElementById("send-btn");
   const body = document.getElementById("response-body");
   const status = document.getElementById("response-status");
+  const examplesContainer = document.getElementById("request-examples");
 
   resEmpty.classList.add("hidden");
   reqPanel.classList.add("visible");
@@ -16,6 +17,21 @@ async function prepareHit(method, url) {
   methodEl.className = `badge ${method}`;
   urlInput.value = url;
   status.textContent = "";
+
+  // Render examples
+  examplesContainer.innerHTML = "";
+  if (examples && examples.length > 0) {
+    examples.forEach((ex) => {
+      const btn = document.createElement("button");
+      btn.className = "example-link";
+      btn.textContent = ex;
+      btn.onclick = () => {
+        urlInput.value = ex;
+        onSend();
+      };
+      examplesContainer.appendChild(btn);
+    });
+  }
 
   const onSend = async () => {
     resPanel.classList.add("visible"); // Show response panel on send
@@ -73,7 +89,7 @@ function renderRoutes(groups) {
 
   if (!container || !groupTemplate || !endpointTemplate) return;
 
-  // Clear existing (if any)
+  // Clear existing
   container.innerHTML = "";
 
   groups.forEach((group) => {
@@ -90,7 +106,7 @@ function renderRoutes(groups) {
       badge.textContent = ep.method;
       badge.classList.add(ep.method);
       pathSpan.textContent = ep.path;
-      a.onclick = () => prepareHit(ep.method, ep.path);
+      a.onclick = () => prepareHit(ep.method, ep.path, ep.examples);
 
       ul.appendChild(epFragment);
     });

@@ -5,7 +5,6 @@ type ILayerHandler = ILayer["handle"];
 
 export function getExploreRouter(apiRouter: Router) {
   const exploreRouter = Router();
-
   exploreRouter.get("/", (_req, res, next) => {
     try {
       res.json(getRouterGroups(apiRouter));
@@ -20,6 +19,7 @@ export function getExploreRouter(apiRouter: Router) {
 export type Endpoint = {
   method: string;
   path: string;
+  examples?: string[];
 };
 
 export type RouteGroup = {
@@ -86,9 +86,14 @@ function getEndpoints(layerHandler: ILayerHandler, prefix: string): Endpoint[] {
         const routePath = layer.route.path === "/" ? "" : layer.route.path;
         const fullPath = `/api${prefix}${routePath}`;
 
+        // Get examples from the handler if they exist
+        const handler = layer.route.stack[0]?.handle;
+        const examples = handler?.examples;
+
         endpoints.push({
           method,
           path: fullPath,
+          ...(examples && { examples }),
         });
       }
     } else if (layer.name === "router") {

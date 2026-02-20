@@ -1,13 +1,24 @@
 import type { DefinedModelsMap } from "@/setup";
-import express from "express";
+import express, { type Request, Response, NextFunction } from "express";
 import { Op } from "sequelize";
  
 export function getProductsRouter(modelsMap: DefinedModelsMap) {
   const { Product } = modelsMap;
-  const productsRouter = express.Router();
 
-  // GET all products
-  productsRouter.get("/", async (req, res, next) => {
+  const productsRouter = express.Router();
+  getAllProducts.examples = [
+    "/api/products?search=apple",
+    "/api/products?search=socks",
+  ];
+  productsRouter.get("/", getAllProducts);
+
+  return productsRouter;
+
+  async function getAllProducts(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
     try {
       const { search } = req.query;
 
@@ -30,7 +41,5 @@ export function getProductsRouter(modelsMap: DefinedModelsMap) {
     } catch (err) {
       next(err);
     }
-  });
-
-  return productsRouter;
+  }
 }
