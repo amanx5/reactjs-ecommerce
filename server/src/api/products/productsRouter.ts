@@ -1,4 +1,5 @@
 import type { DefinedModelsMap } from "@/setup";
+import { failure, success } from "@/utils";
 import express, { type Request, Response, NextFunction } from "express";
 import { Op } from "sequelize";
  
@@ -34,12 +35,9 @@ export function getProductsRouter(modelsMap: DefinedModelsMap) {
 
       const products = await Product.findAll({ where });
 
-      res.json({
-        success: true,
-        data: products,
-      });
+      success(res, "Products fetched successfully", products);
     } catch (err) {
-      next(err);
+      failure(next, "Failed to fetch products", err);
     }
   }
 }

@@ -1,4 +1,5 @@
 import type { DefinedModelsMap } from "@/setup";
+import { failure, success } from "@/utils";
 import express, { Request, Response, NextFunction } from "express";
 
 export function getDeliveryOptionsRouter(modelsMap: DefinedModelsMap) {
@@ -18,9 +19,9 @@ export function getDeliveryOptionsRouter(modelsMap: DefinedModelsMap) {
   ) {
     try {
       const deliveryOptions = await DeliveryOption.findAll();
-      res.json(deliveryOptions);
+      success(res, "Delivery options fetched successfully", deliveryOptions);
     } catch (err) {
-      next(err);
+      failure(next, "Failed to fetch delivery options", err);
     }
   }
 
@@ -34,12 +35,12 @@ export function getDeliveryOptionsRouter(modelsMap: DefinedModelsMap) {
         req.params.id as string,
       );
       if (deliveryOption) {
-        res.json(deliveryOption);
+        success(res, "Delivery option fetched successfully", deliveryOption);
       } else {
-        next();
+        failure(next, "Delivery option doesn't exist with given id");
       }
     } catch (err) {
-      next(err);
+      failure(next, "Failed to fetch delivery option", err);
     }
   }
 }

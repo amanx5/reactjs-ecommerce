@@ -1,4 +1,5 @@
 import type { DefinedModelsMap } from "@/setup";
+import { success } from "@/utils";
 import express, { Request, Response } from "express";
 
 export function getOrdersRouter(_modelsMap: DefinedModelsMap) {
@@ -8,25 +9,16 @@ export function getOrdersRouter(_modelsMap: DefinedModelsMap) {
   ordersRouter.get("/:id", getOrderById);
   ordersRouter.post("/", createOrder);
 
-  async function getAllOrders(req: Request, res: Response) {
-    res.json({
-      message: "Get all orders",
-      orders: [],
-    });
+  async function getAllOrders(_req: Request, res: Response) {
+    success(res, "Orders fetched successfully", []);
   }
 
   async function getOrderById(req: Request, res: Response) {
-    res.json({
-      message: `Get order ${req.params.id}`,
-      order: null,
-    });
+    success(res, `Order ${req.params.id} fetched successfully`, null);
   }
 
-  async function createOrder(req: Request, res: Response) {
-    res.json({
-      message: "Order created",
-      orderId: null,
-    });
+  async function createOrder(_req: Request, res: Response) {
+    success(res, "Order created successfully", null);
   }
 
   return ordersRouter;

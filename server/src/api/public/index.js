@@ -75,10 +75,14 @@ async function prepareHit(method, url, examples = []) {
 async function init() {
   try {
     const res = await fetch("/api/__explore");
-    const groups = await res.json();
-    renderRoutes(groups);
+    const result = await res.json();
+    if (result?.success && Array.isArray(result?.data)) {
+      renderRoutes(result.data);
+    } else {
+      console.error(result?.message, result?.error);
+    }
   } catch (err) {
-    console.error("Failed to load routes", err);
+    console.error("Failed to derive routes", err);
   }
 }
 

@@ -59,15 +59,22 @@ function prepareElementsText(log: Log) {
         str = JSON.stringify(el, null, 2);
       }
     } catch (err) {
-      str = "<error occured while stringifying log element>";
+      str = "Error occured while stringifying log element: " + err;
     }
 
     return str + "\n";
   }
 }
 
-function hasOriginalError(obj: any): obj is { original: Error } {
-  return obj?.original instanceof Error;
+function hasOriginalError(obj: unknown): obj is { original: Error } {
+  if (typeof obj === "object" && obj !== null && hasOriginalProperty(obj)) {
+    return obj.original instanceof Error;
+  }
+  return false;
+
+  function hasOriginalProperty(obj: object): obj is { original: Error } {
+    return Object.hasOwn(obj, "original");
+  }
 }
 
 export function addConsoleLog(level: LogLevel, ...elements: LogElements) {

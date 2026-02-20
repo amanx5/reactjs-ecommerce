@@ -8,7 +8,7 @@ import {
 } from "@/api";
 import { FILE_PATHS } from "@/constants";
 import type { DefinedModelsMap } from "@/setup/";
-import { addAppRequestLog, isDevelopment } from "@/utils";
+import { addAppRequestLog, failure, isDevelopment } from "@/utils";
 import cors from "cors";
 import express, {
   type RequestHandler,
@@ -66,7 +66,11 @@ const uiProductionMiddleware: RequestHandler = (_req, res, next) => {
     // transfer failed
     if (err && !res.headersSent) {
       const isFileMissing = "code" in err && err.code === "ENOENT"; // ErrorNoENTry
-      next(isFileMissing ? "Webpage not available" : "Something went wrong");
+      failure(
+        next,
+        isFileMissing ? "Webpage not available" : "Something went wrong",
+        err,
+      );
     }
   }
 };
@@ -76,7 +80,7 @@ const uiDevelopmentMiddleware: RequestHandler = (req, res, next) => {
     // devUrl will handle all future requests
     res.redirect(uiDevUrl + req.originalUrl);
   } else {
-    next(`"${uiDevUrlEnvKey}" is missing in environment file.`);
+    failure(next, `"${uiDevUrlEnvKey}" is missing in environment file.`);
   }
 };
 
@@ -96,7 +100,7 @@ const notFoundMiddleware: RequestHandler = (_req, res, _next) => {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const errorMiddleware: ErrorRequestHandler = (err, req, res, next) => {
   res.locals.err = err;
-  res.sendStatus(500);
+  res.status(500).send(err?.clientMessage || "Something went wrong");
 };
 
 //
