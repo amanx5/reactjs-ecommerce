@@ -1,4 +1,4 @@
-import { Request, Response, Router, type IRoute } from "express";
+import { Router, type IRoute } from "express";
 
 type ILayer = IRoute["stack"][number];
 type ILayerHandler = ILayer["handle"];
@@ -6,12 +6,11 @@ type ILayerHandler = ILayer["handle"];
 export function getExploreRouter(apiRouter: Router) {
   const exploreRouter = Router();
 
-  exploreRouter.get("/", (req: Request, res: Response) => {
+  exploreRouter.get("/", (_req, res, next) => {
     try {
       res.json(getRouterGroups(apiRouter));
     } catch (err) {
-      res.locals.err = err;
-      res.sendStatus(500);
+      next(err);
     }
   });
 

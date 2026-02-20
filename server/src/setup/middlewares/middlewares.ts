@@ -58,30 +58,25 @@ const loggerMiddleware: RequestHandler = (req, res, next) => {
   next();
 };
 
-const uiProductionMiddleware: RequestHandler = (_req, res, _next) => {
+const uiProductionMiddleware: RequestHandler = (_req, res, next) => {
   // uiBuildHtml will handle all future requests if sendFile completes without error
   res.sendFile(FILE_PATHS.uiBuildHtml, onTransferCompleteOrError);
 
   function onTransferCompleteOrError(err: Error) {
+    // transfer failed
     if (err && !res.headersSent) {
-      // transfer failed
       const isFileMissing = "code" in err && err.code === "ENOENT"; // ErrorNoENTry
-      res.locals.err = err;
-      res
-        .status(400)
-        .send(isFileMissing ? "Webpage not Available" : "Something went wrong");
+      next(isFileMissing ? "Webpage not available" : "Something went wrong");
     }
   }
 };
 
-const uiDevelopmentMiddleware: RequestHandler = (req, res, _next) => {
+const uiDevelopmentMiddleware: RequestHandler = (req, res, next) => {
   if (uiDevUrl) {
     // devUrl will handle all future requests
     res.redirect(uiDevUrl + req.originalUrl);
   } else {
-    const err = `"${uiDevUrlEnvKey}" is missing in environment file.`;
-    res.locals.err = err;
-    res.status(500).send(err);
+    next(`"${uiDevUrlEnvKey}" is missing in environment file.`);
   }
 };
 

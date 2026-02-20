@@ -45,7 +45,7 @@ export function setupMiddlewares(app: Express, psh: PersistenceHelpers) {
     app.get("*", uiDevelopmentMiddleware);
   }
 
-  // catch requests of method other than GET (GET is already handled above)
+  // catch unresolved requests
   app.use(notFoundMiddleware);
 
   // error handling
