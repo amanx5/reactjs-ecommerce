@@ -1,26 +1,25 @@
-import type { ModelDefinition } from ".";
+import type { Schema } from ".";
 import { DataTypes } from "sequelize";
 
-export const OrderModelDefinition = [
-  "Order",
+export const CartItemSchema = [
+  "CartItem",
   {
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
     },
-    orderTimeMs: {
-      type: DataTypes.BIGINT,
+    productId: {
+      type: DataTypes.UUID,
       allowNull: false,
     },
-    totalCostCents: {
+    quantity: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      defaultValue: 1,
     },
-    products: {
-      type: DataTypes.JSON,
-      allowNull: false,
-      defaultValue: [],
+    deliveryOptionId: {
+      type: DataTypes.STRING,
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -32,7 +31,7 @@ export const OrderModelDefinition = [
     },
   },
   {
-    tableName: "orders",
+    tableName: "cart_items",
     timestamps: true,
   },
-] as const satisfies ModelDefinition;
+] as const satisfies Schema;

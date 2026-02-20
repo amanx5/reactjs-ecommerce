@@ -1,5 +1,5 @@
 import {
-  getCartRouter,
+  getCartItemsRouter,
   getDeliveryOptionsRouter,
   getOrdersRouter,
   getProductsRouter,
@@ -113,8 +113,8 @@ function getApiRouter(modelsMap: DefinedModelsMap) {
   const apiRouter = express.Router();
 
   apiRouter.use(apiPublicMiddleware);
-  apiRouter.use("/cart", getCartRouter(modelsMap));
-  apiRouter.use("/delivery-options", getDeliveryOptionsRouter(modelsMap));
+  apiRouter.use("/cartItems", getCartItemsRouter(modelsMap));
+  apiRouter.use("/deliveryOptions", getDeliveryOptionsRouter(modelsMap));
   apiRouter.use("/orders", getOrdersRouter(modelsMap));
   apiRouter.use("/products", getProductsRouter(modelsMap));
 

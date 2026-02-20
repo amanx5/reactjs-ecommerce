@@ -1,7 +1,7 @@
-import type { ModelDefinition } from ".";
+import type { Schema } from ".";
 import { DataTypes } from "sequelize";
 
-export const DeliveryOptionModelDefinition = [
+export const DeliveryOptionSchema = [
   "DeliveryOption",
   {
     id: {
@@ -29,4 +29,4 @@ export const DeliveryOptionModelDefinition = [
     tableName: "delivery_options",
     timestamps: true,
   },
-] as const satisfies ModelDefinition;
+] as const satisfies Schema;

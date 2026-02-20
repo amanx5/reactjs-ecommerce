@@ -1,21 +1,21 @@
 import { type Sequelize } from "sequelize";
 import {
-  CartModelDefinition,
-  DeliveryOptionModelDefinition,
-  OrderModelDefinition,
-  ProductModelDefinition,
-} from "@/setup/";
+  CartItemSchema,
+  DeliveryOptionSchema,
+  OrderSchema,
+  ProductSchema,
+} from "@/constants/";
 
 export type DefinedModelsMap = ReturnType<typeof defineModels>;
 
 export function defineModels(sequelize: Sequelize) {
-  const Cart = sequelize.define(...CartModelDefinition);
-  const DeliveryOption = sequelize.define(...DeliveryOptionModelDefinition);
-  const Order = sequelize.define(...OrderModelDefinition);
-  const Product = sequelize.define(...ProductModelDefinition);
+  const CartItem = sequelize.define(...CartItemSchema);
+  const DeliveryOption = sequelize.define(...DeliveryOptionSchema);
+  const Order = sequelize.define(...OrderSchema);
+  const Product = sequelize.define(...ProductSchema);
 
   const modelsMap = {
-    Cart,
+    CartItem,
     DeliveryOption,
     Order,
     Product,

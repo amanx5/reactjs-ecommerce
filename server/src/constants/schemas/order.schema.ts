@@ -1,32 +1,25 @@
+import type { Schema } from ".";
 import { DataTypes } from "sequelize";
-import type { ModelDefinition } from ".";
 
-export const ProductModelDefinition = [
-  "Product",
+export const OrderSchema = [
+  "Order",
   {
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
     },
-    name: {
-      type: DataTypes.STRING,
+    orderTimeMs: {
+      type: DataTypes.BIGINT,
       allowNull: false,
     },
-    image: {
-      type: DataTypes.STRING,
-    },
-    rating: {
-      type: DataTypes.JSON,
-      allowNull: false,
-      defaultValue: { stars: 0, count: 0 },
-    },
-    priceCents: {
+    totalCostCents: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    keywords: {
+    products: {
       type: DataTypes.JSON,
+      allowNull: false,
       defaultValue: [],
     },
     createdAt: {
@@ -39,8 +32,7 @@ export const ProductModelDefinition = [
     },
   },
   {
-    tableName: "products",
+    tableName: "orders",
     timestamps: true,
   },
-] as const satisfies ModelDefinition;
-
+] as const satisfies Schema;

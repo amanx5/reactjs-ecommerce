@@ -1,23 +1,28 @@
-import { JSON_MAP } from "@/json";
+import {
+  cartItemsJson,
+  ordersJson,
+  productsJson,
+  deliveryOptionsJson,
+} from "@/constants";
 import type { DefinedModelsMap } from "@/setup";
 import { Router } from "express";
 
 export function getResetRouter(modelsMap: DefinedModelsMap) {
-  const { Cart, DeliveryOption, Order, Product } = modelsMap;
+  const { CartItem, DeliveryOption, Order, Product } = modelsMap;
   const resetRouter = Router();
 
   resetRouter.post("/", async (req, res) => {
     try {
       // Clear existing data
-      await Cart.destroy({ where: {}, truncate: true, force: true });
+      await CartItem.destroy({ where: {}, truncate: true, force: true });
       await Order.destroy({ where: {}, truncate: true, force: true });
       await Product.destroy({ where: {}, truncate: true, force: true });
       await DeliveryOption.destroy({ where: {}, truncate: true, force: true });
 
-      await Cart.bulkCreate(JSON_MAP.cart);
-      await DeliveryOption.bulkCreate(JSON_MAP.deliveryOptions);
-      await Order.bulkCreate(JSON_MAP.orders);
-      await Product.bulkCreate(JSON_MAP.products);
+      await CartItem.bulkCreate(cartItemsJson);
+      await DeliveryOption.bulkCreate(deliveryOptionsJson);
+      await Order.bulkCreate(ordersJson);
+      await Product.bulkCreate(productsJson);
 
       res.status(200).json({
         success: true,
