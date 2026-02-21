@@ -1,5 +1,5 @@
 import type { DefinedModelsMap } from "@/setup";
-import { failure, success } from "@/utils";
+import { failure, isString, success } from "@/utils";
 import express, { Request, Response, NextFunction } from "express";
 
 export function getDeliveryOptionsRouter(modelsMap: DefinedModelsMap) {
@@ -13,13 +13,31 @@ export function getDeliveryOptionsRouter(modelsMap: DefinedModelsMap) {
   return deliveryOptionsRouter;
 
   async function getAllDeliveryOptions(
-    _req: Request,
+    req: Request,
     res: Response,
     next: NextFunction,
   ) {
     try {
       const deliveryOptions = await DeliveryOption.findAll();
-      success(res, 200, "Delivery options fetched successfully", deliveryOptions);
+      const { expand } = req.query;
+
+      let result = deliveryOptions.map((deliveryOption) =>
+        // Calling instance.get({ plain: true }) strips away all the Sequelize-specific "bloat" and returns a plain JavaScript object containing only the data.
+        deliveryOption.get({ plain: true }),
+      );
+
+      if (isString(expand) && expand === "estimatedDeliveryTime") {
+        const now = Date.now();
+        const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+        result = result.map((deliveryOption) => ({
+          ...deliveryOption,
+          estimatedDeliveryTimeMs:
+            now + deliveryOption.deliveryDays * MS_PER_DAY,
+        }));
+      }
+
+      success(res, 200, "Delivery options fetched successfully", result);
     } catch (err) {
       failure(next, "Failed to fetch delivery options", err);
     }
@@ -35,7 +53,17 @@ export function getDeliveryOptionsRouter(modelsMap: DefinedModelsMap) {
         req.params.id as string,
       );
       if (deliveryOption) {
-        success(res, 200, "Delivery option fetched successfully", deliveryOption);
+        let result = deliveryOption.get({ plain: true });
+        const { expand } = req.query;
+
+        if (isString(expand) && expand === "estimatedDeliveryTime") {
+          const now = Date.now();
+          const MS_PER_DAY = 24 * 60 * 60 * 1000;
+          result.estimatedDeliveryTimeMs =
+            now + result.deliveryDays * MS_PER_DAY;
+        }
+
+        success(res, 200, "Delivery option fetched successfully", result);
       } else {
         failure(next, "Delivery option doesn't exist with given id");
       }
