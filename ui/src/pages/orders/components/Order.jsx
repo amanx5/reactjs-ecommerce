@@ -2,18 +2,18 @@ import OrderHeader from './OrderHeader';
 import Product from './Product';
 
 export default function Order({ order }) {
-	const { products: orderProducts } = order;
+	const { orderItems } = order;
 
 	return (
 		<>
 			<div className='order-container'>
 				<OrderHeader order={order} />
 				<div className='order-details-grid'>
-					{orderProducts.map((orderProduct) => (
+					{orderItems.map((orderItem) => (
 						<Product
 							order={order}
-							key={orderProduct.productId}
-							orderProduct={orderProduct}
+							key={orderItem.productId}
+							orderItem={orderItem}
 						/>
 					))}
 				</div>
@@ -21,4 +21,3 @@ export default function Order({ order }) {
 		</>
 	);
 }
-

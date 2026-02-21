@@ -15,12 +15,12 @@ function getKeyForOrderStatus(orderStatusNum) {
 		.find(([key, value]) => value === orderStatusNum);
 }
 
-export const calculateOrderStatus = function (order, orderProduct) {
+export const calculateOrderStatus = function (order, orderItem) {
 	const { created, shipped, outForDelivery, deliveryDelayed, delivered } =
 		orderStatusMap;
 
 	const { orderTimeMs } = order;
-	const { estimatedDeliveryTimeMs, deliveredOnTimeMs } = orderProduct;
+	const { estimatedDeliveryTimeMs, deliveredOnTimeMs } = orderItem;
 	const totalDeliveryTimeMs = estimatedDeliveryTimeMs - orderTimeMs;
 
 	if (deliveredOnTimeMs || totalDeliveryTimeMs === 0) {
@@ -42,16 +42,12 @@ export const calculateOrderStatus = function (order, orderProduct) {
 	}
 };
 
-export const getOrderTrackingInfo = function (
-	order,
-	orderProduct,
-	orderStatus
-) {
-	orderStatus ??= calculateOrderStatus(order, orderProduct);
+export const getOrderTrackingInfo = function (order, orderItem, orderStatus) {
+	orderStatus ??= calculateOrderStatus(order, orderItem);
 	const { orderTimeMs } = order;
 	const { created, shipped, outForDelivery, deliveryDelayed, delivered } =
 		orderStatusMap;
-	const { estimatedDeliveryTimeMs, deliveredOnTimeMs } = orderProduct;
+	const { estimatedDeliveryTimeMs, deliveredOnTimeMs } = orderItem;
 	let heading, subHeading;
 
 	switch (orderStatus) {

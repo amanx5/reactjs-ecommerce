@@ -4,3 +4,4 @@ export * from "./database";
 export * from "./environment";
 export * from "./loggers";
 export * from "./responses";
+export * from "./data-types";

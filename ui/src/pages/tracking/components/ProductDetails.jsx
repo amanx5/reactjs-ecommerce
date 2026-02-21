@@ -1,5 +1,5 @@
-export default function ProductDetails({ orderProduct }) {
-	const { quantity, product = {} } = orderProduct;
+export default function ProductDetails({ orderItem }) {
+	const { quantity, product = {} } = orderItem;
 	const { name, image } = product;
 
 	return (

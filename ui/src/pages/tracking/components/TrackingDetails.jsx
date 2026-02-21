@@ -6,32 +6,32 @@ import {
 import ProductDetails from './ProductDetails';
 
 export default function TrackingDetails({ order, productId }) {
-	const { products: orderProducts = [] } = order;
-	const orderProduct = orderProducts.find(
-		(orderProduct) => orderProduct.productId === productId
+	const { orderItems = [] } = order;
+	const orderItem = orderItems.find(
+		(orderItem) => orderItem.productId === productId,
 	);
 	// TODO - Return status from order api
-	const orderStatus = calculateOrderStatus(order, orderProduct);
+	const orderStatus = calculateOrderStatus(order, orderItem);
 
 	return (
 		<div className='order-tracking'>
 			<ProgressHeading
 				order={order}
-				orderProduct={orderProduct}
+				orderItem={orderItem}
 				orderStatus={orderStatus}
 			/>
-			<ProductDetails orderProduct={orderProduct} />
+			<ProductDetails orderItem={orderItem} />
 			<ProgressLabels orderStatus={orderStatus} />
 			<ProgressBar orderStatus={orderStatus} />
 		</div>
 	);
 }
 
-function ProgressHeading({ order, orderProduct, orderStatus }) {
+function ProgressHeading({ order, orderItem, orderStatus }) {
 	const { heading, subHeading } = getOrderTrackingInfo(
 		order,
-		orderProduct,
-		orderStatus
+		orderItem,
+		orderStatus,
 	);
 
 	return (

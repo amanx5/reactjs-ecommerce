@@ -29,8 +29,8 @@ export function defineModels(sequelize: Sequelize) {
   OrderItem.belongsTo(Order, { foreignKey: "orderId", as: "order" });
   OrderItem.belongsTo(Product, { foreignKey: "productId", as: "product" });
 
-  Order.hasMany(OrderItem, { foreignKey: "orderId" });
-  Product.hasMany(OrderItem, { foreignKey: "productId" });
+  Order.hasMany(OrderItem, { foreignKey: "orderId", as: "orderItems" });
+  Product.hasMany(OrderItem, { foreignKey: "productId", as: "orderItems" });
 
   const modelsMap = {
     CartItem,
