@@ -1,5 +1,5 @@
 import type { DefinedModelsMap } from "@/setup";
-import { success, failure } from "@/utils";
+import { success, failure, isNumber } from "@/utils";
 import express, { Request, Response, type NextFunction } from "express";
 
 export function getCartItemsRouter(modelsMap: DefinedModelsMap) {
@@ -19,7 +19,7 @@ export function getCartItemsRouter(modelsMap: DefinedModelsMap) {
   async function getCartItems(req: Request, res: Response, next: NextFunction) {
     try {
       const { expand } = req.query;
-      const include = []; 
+      const include = [];
 
       if (expand === "product") {
         include.push("product");
@@ -43,12 +43,12 @@ export function getCartItemsRouter(modelsMap: DefinedModelsMap) {
     }
 
     const quantityIncrement = parseInt(quantity, 10);
-    const isQuanityValid =
+    const isQuantityValid =
       !isNaN(quantityIncrement) &&
       quantityIncrement > min &&
       quantityIncrement < max;
 
-    if (!isQuanityValid) {
+    if (!isQuantityValid) {
       return failure(next, "Quantity must be a number between 1 and 10");
     }
 
@@ -58,13 +58,15 @@ export function getCartItemsRouter(modelsMap: DefinedModelsMap) {
       if (cartItem) {
         const currentQuantity = cartItem.get("quantity");
         if (
-          typeof currentQuantity === "number" &&
+          isNumber(currentQuantity) &&
           currentQuantity + quantityIncrement > max
         ) {
           const available = max - currentQuantity;
           return failure(
             next,
-            `Quantity must be less than ${available} (max is 10)`,
+            available < 1
+              ? "You have already added maximum quantity of this item to the cart"
+              : `You can add maximum of ${available} more items`,
           );
         }
         // Increment quantity atomically

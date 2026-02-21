@@ -131,9 +131,12 @@ export function getOrdersRouter(_modelsMap: DefinedModelsMap) {
         });
       }
 
+      const taxCents = Math.round(totalCostCents * 0.1);
+      const totalCostCentsWithTax = totalCostCents + taxCents;
+
       const orderData = {
         orderTimeMs: Date.now(),
-        totalCostCents,
+        totalCostCents: totalCostCentsWithTax,
       };
 
       const order = await Order.create(orderData, { transaction: t });

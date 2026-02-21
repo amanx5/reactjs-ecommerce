@@ -2,6 +2,7 @@ import {
   getCartItemsRouter,
   getDeliveryOptionsRouter,
   getOrdersRouter,
+  getPaymentSummaryRouter,
   getProductsRouter,
   getExploreRouter,
   getResetRouter,
@@ -116,6 +117,7 @@ function getApiRouter(modelsMap: DefinedModelsMap) {
   apiRouter.use("/cartItems", getCartItemsRouter(modelsMap));
   apiRouter.use("/deliveryOptions", getDeliveryOptionsRouter(modelsMap));
   apiRouter.use("/orders", getOrdersRouter(modelsMap));
+  apiRouter.use("/paymentSummary", getPaymentSummaryRouter(modelsMap));
   apiRouter.use("/products", getProductsRouter(modelsMap));
 
   if (isDevelopment()) {

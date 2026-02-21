@@ -1,6 +1,6 @@
 import { FILE_PATHS } from "@/constants/";
 import { defineModels, type DefinedModelsMap, terminateServer } from "@/setup/";
-import { addAppLog, addSqlLog, LOG_LEVELS, seedStaticTables } from "@/utils/";
+import { addAppLog, addSqlLog, isDevelopment, LOG_LEVELS, seedStaticTables } from "@/utils/";
 import { Sequelize } from "sequelize";
 
 export type PersistenceInstance = Sequelize;
@@ -14,6 +14,7 @@ export async function setupPersistence(): Promise<PersistenceHelpers> {
     dialect: "sqlite",
     storage: FILE_PATHS.database,
     logging: addSqlLog,
+    logQueryParameters: isDevelopment()
   });
 
   try {
