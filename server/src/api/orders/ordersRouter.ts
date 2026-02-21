@@ -1,5 +1,6 @@
+import { HttpStatus } from "@/constants";
 import type { DefinedModelsMap } from "@/setup";
-import { failure, isNumber, isString, success } from "@/utils";
+import { sendResponseError, isNumber, isString, sendResponse } from "@/utils";
 import express, { NextFunction, Request, Response } from "express";
 
 export function getOrdersRouter(_modelsMap: DefinedModelsMap) {
@@ -33,9 +34,15 @@ export function getOrdersRouter(_modelsMap: DefinedModelsMap) {
         include,
         order: [["createdAt", "DESC"]],
       });
-      success(res, 200, "Orders fetched successfully", orders);
+      sendResponse(
+        res,
+        HttpStatus.OK,
+        true,
+        "Orders fetched successfully",
+        orders,
+      );
     } catch (error) {
-      failure(next, "Failed to fetch orders", error);
+      sendResponseError(next, "Failed to fetch orders", error);
     }
   }
 
@@ -66,19 +73,25 @@ export function getOrdersRouter(_modelsMap: DefinedModelsMap) {
       });
 
       if (!order) {
-        return success(res, 404, "Order not found", null);
+        return sendResponse(res, 404, false, "Order not found", null);
       }
 
-      success(res, 200, "Order fetched successfully", order);
+      sendResponse(
+        res,
+        HttpStatus.OK,
+        true,
+        "Order fetched successfully",
+        order,
+      );
     } catch (error) {
-      failure(next, "Failed to fetch order", error);
+      sendResponseError(next, "Failed to fetch order", error);
     }
   }
 
   async function createOrder(_req: Request, res: Response, next: NextFunction) {
     const sequelize = Order.sequelize;
     if (!sequelize) {
-      return failure(next, "Server error. Please try again later.");
+      return sendResponseError(next, "Server error. Please try again later.");
     }
 
     const t = await sequelize.transaction();
@@ -94,7 +107,13 @@ export function getOrdersRouter(_modelsMap: DefinedModelsMap) {
 
       if (cartItems.length === 0) {
         await t.rollback();
-        return success(res, 200, "Can't create order. Cart is empty", null);
+        return sendResponse(
+          res,
+          400,
+          false,
+          "Can't create order. Cart is empty",
+          null,
+        );
       }
 
       let totalCostCents = 0;
@@ -154,10 +173,16 @@ export function getOrdersRouter(_modelsMap: DefinedModelsMap) {
       await CartItem.destroy({ where: {}, transaction: t });
 
       await t.commit();
-      success(res, 201, "Order created successfully", order);
+      sendResponse(
+        res,
+        HttpStatus.CREATED,
+        true,
+        "Order created successfully",
+        order,
+      );
     } catch (error) {
       await t.rollback();
-      failure(next, "Failed to create order", error);
+      sendResponseError(next, "Failed to create order", error);
     }
   }
 

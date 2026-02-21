@@ -1,5 +1,6 @@
+import { HttpStatus } from "@/constants";
 import type { DefinedModelsMap } from "@/setup";
-import { failure, isString, success } from "@/utils";
+import { sendResponseError, isString, sendResponse } from "@/utils";
 import express, { Request, Response, NextFunction } from "express";
 
 export function getDeliveryOptionsRouter(modelsMap: DefinedModelsMap) {
@@ -37,9 +38,15 @@ export function getDeliveryOptionsRouter(modelsMap: DefinedModelsMap) {
         }));
       }
 
-      success(res, 200, "Delivery options fetched successfully", result);
+      sendResponse(
+        res,
+        HttpStatus.OK,
+        true,
+        "Delivery options fetched successfully",
+        result,
+      );
     } catch (err) {
-      failure(next, "Failed to fetch delivery options", err);
+      sendResponseError(next, "Failed to fetch delivery options", err);
     }
   }
 
@@ -53,7 +60,7 @@ export function getDeliveryOptionsRouter(modelsMap: DefinedModelsMap) {
         req.params.id as string,
       );
       if (deliveryOption) {
-        let result = deliveryOption.get({ plain: true });
+        const result = deliveryOption.get({ plain: true });
         const { expand } = req.query;
 
         if (isString(expand) && expand === "estimatedDeliveryTime") {
@@ -63,12 +70,23 @@ export function getDeliveryOptionsRouter(modelsMap: DefinedModelsMap) {
             now + result.deliveryDays * MS_PER_DAY;
         }
 
-        success(res, 200, "Delivery option fetched successfully", result);
+        sendResponse(
+          res,
+          HttpStatus.OK,
+          true,
+          "Delivery option fetched successfully",
+          result,
+        );
       } else {
-        failure(next, "Delivery option doesn't exist with given id");
+        sendResponse(
+          res,
+          404,
+          false,
+          "Delivery option doesn't exist with given id",
+        );
       }
     } catch (err) {
-      failure(next, "Failed to fetch delivery option", err);
+      sendResponseError(next, "Failed to fetch delivery option", err);
     }
   }
 }

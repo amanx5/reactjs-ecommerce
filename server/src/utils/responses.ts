@@ -1,20 +1,25 @@
-import type { HttpStatus } from "@/constants";
+import { HttpStatus } from "@/constants";
 import { type Response, type NextFunction } from "express";
 
-export function success(
+export function sendResponse(
   res: Response,
   status: HttpStatus,
+  success: boolean,
   clientMessage: string,
   data?: unknown,
 ) {
+  if (status === HttpStatus.NO_CONTENT) {
+    return res.sendStatus(HttpStatus.NO_CONTENT);
+  }
+
   return res.status(status).json({
-    success: true,
+    success,
     message: clientMessage,
     data,
   });
 }
 
-export function failure(
+export function sendResponseError(
   next: NextFunction,
   clientMessage: string,
   error?: unknown,

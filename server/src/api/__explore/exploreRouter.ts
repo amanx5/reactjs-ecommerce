@@ -1,4 +1,5 @@
-import { failure, success } from "@/utils";
+import { HttpStatus } from "@/constants";
+import { sendResponseError, sendResponse } from "@/utils";
 import { Router, type IRoute } from "express";
 
 type ILayer = IRoute["stack"][number];
@@ -8,14 +9,15 @@ export function getExploreRouter(apiRouter: Router) {
   const exploreRouter = Router();
   exploreRouter.get("/", (_req, res, next) => {
     try {
-      success(
+      sendResponse(
         res,
-        200,
+        HttpStatus.OK,
+        true,
         "API endpoints derived successfully.",
         getRouterGroups(apiRouter),
       );
     } catch (err) {
-      failure(next, "Failed to derive API endpoints.", err);
+      sendResponseError(next, "Failed to derive API endpoints.", err);
     }
   });
 

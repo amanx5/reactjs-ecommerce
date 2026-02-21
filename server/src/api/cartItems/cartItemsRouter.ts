@@ -1,5 +1,6 @@
+import { HttpStatus } from "@/constants";
 import type { DefinedModelsMap } from "@/setup";
-import { success, failure, isNumber } from "@/utils";
+import { sendResponse, sendResponseError, isNumber } from "@/utils";
 import express, { Request, Response, type NextFunction } from "express";
 
 export function getCartItemsRouter(modelsMap: DefinedModelsMap) {
@@ -26,9 +27,15 @@ export function getCartItemsRouter(modelsMap: DefinedModelsMap) {
       }
 
       const items = await CartItem.findAll({ include });
-      success(res, 200, "Cart items fetched successfully", items);
+      sendResponse(
+        res,
+        HttpStatus.OK,
+        true,
+        "Cart items fetched successfully",
+        items,
+      );
     } catch (err) {
-      failure(next, "Failed to fetch cart items", err);
+      sendResponseError(next, "Failed to fetch cart items", err);
     }
   }
 
@@ -39,7 +46,7 @@ export function getCartItemsRouter(modelsMap: DefinedModelsMap) {
     const { productId, quantity = 1, deliveryOptionId = "1" } = req.body;
 
     if (!productId) {
-      return failure(next, "Product ID is required");
+      return sendResponseError(next, "Product ID is required");
     }
 
     const quantityIncrement = parseInt(quantity, 10);
@@ -49,7 +56,10 @@ export function getCartItemsRouter(modelsMap: DefinedModelsMap) {
       quantityIncrement < max;
 
     if (!isQuantityValid) {
-      return failure(next, "Quantity must be a number between 1 and 10");
+      return sendResponseError(
+        next,
+        "Quantity must be a number between 1 and 10",
+      );
     }
 
     try {
@@ -62,7 +72,7 @@ export function getCartItemsRouter(modelsMap: DefinedModelsMap) {
           currentQuantity + quantityIncrement > max
         ) {
           const available = max - currentQuantity;
-          return failure(
+          return sendResponseError(
             next,
             available < 1
               ? "You have already added maximum quantity of this item to the cart"
@@ -82,9 +92,15 @@ export function getCartItemsRouter(modelsMap: DefinedModelsMap) {
         });
       }
 
-      success(res, 201, "Item added to cart", cartItem);
+      sendResponse(
+        res,
+        HttpStatus.CREATED,
+        true,
+        "Item added to cart",
+        cartItem,
+      );
     } catch (err) {
-      failure(next, "Failed to add item to cart", err);
+      sendResponseError(next, "Failed to add item to cart", err);
     }
   }
 
@@ -103,12 +119,23 @@ export function getCartItemsRouter(modelsMap: DefinedModelsMap) {
         if (deliveryOptionId !== undefined) {
           await cartItem.update({ deliveryOptionId });
         }
-        success(res, 200, "Cart item updated successfully", cartItem);
+        sendResponse(
+          res,
+          HttpStatus.OK,
+          true,
+          "Cart item updated successfully",
+          cartItem,
+        );
       } else {
-        failure(next, "Item not found in cart");
+        sendResponse(
+          res,
+          HttpStatus.NOT_FOUND,
+          false,
+          "Item not found in cart",
+        );
       }
     } catch (err) {
-      failure(next, "Failed to update cart item", err);
+      sendResponseError(next, "Failed to update cart item", err);
     }
   }
 
@@ -123,12 +150,12 @@ export function getCartItemsRouter(modelsMap: DefinedModelsMap) {
       const deletedCount = await CartItem.destroy({ where: { productId } });
 
       if (deletedCount > 0) {
-        success(res, 204, "Item removed from cart");
+        sendResponse(res, 204, true, "Item removed from cart");
       } else {
-        failure(next, "Item not found in cart");
+        sendResponse(res, 404, false, "Item not found in cart");
       }
     } catch (err) {
-      failure(next, "Failed to remove item from cart", err);
+      sendResponseError(next, "Failed to remove item from cart", err);
     }
   }
 }

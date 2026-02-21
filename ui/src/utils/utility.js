@@ -18,7 +18,7 @@ export const APP_CONSTANTS = {
  * @example
  * const { success, data, error } = await apiRequest('/api/cartItems', { productId: 'abc', quantity: 2 }, 'post');
  */
-export const apiRequest = async function (url, data, method = 'get') {
+export const apiRequest = async function (url, data, method = 'get', sendFullResponse) {
 	let result = { success: null, data: null, error: null };
 	if (!url) {
 		warnDev('Request not sent. [url param is missing]');
@@ -37,7 +37,8 @@ export const apiRequest = async function (url, data, method = 'get') {
 			response = await axios.get(url);
 		}
 
-		result = response.data;
+
+		result = sendFullResponse ? response : response.data;
 	} catch (error) {
 		console.error(error);
 		result.error = error;

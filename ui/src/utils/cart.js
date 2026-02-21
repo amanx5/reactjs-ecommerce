@@ -32,13 +32,14 @@ export const addNewCartItem = async function (data) {
 };
 
 export const deleteCartItem = async function (productId) {
-	const { success } = await apiRequest(
+	const response = await apiRequest(
 		`/api/cartItems/${productId}`,
 		null,
 		'delete',
+		true,
 	);
 
-	if (success) {
+	if (response.status === 204) {
 		return true;
 	}
 };

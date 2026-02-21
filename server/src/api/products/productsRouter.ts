@@ -1,9 +1,10 @@
+import { HttpStatus } from "@/constants";
 import type { DefinedModelsMap } from "@/setup";
-import { failure, isObject, isString, success } from "@/utils";
+import { sendResponseError, isObject, isString, sendResponse } from "@/utils";
 import express, { type Request, Response, NextFunction } from "express";
 import Fuse from "fuse.js";
 import { Op } from "sequelize";
- 
+
 export function getProductsRouter(modelsMap: DefinedModelsMap) {
   const { Product } = modelsMap;
 
@@ -80,9 +81,15 @@ export function getProductsRouter(modelsMap: DefinedModelsMap) {
         results = await Product.findAll();
       }
 
-      success(res, 200, "Products fetched successfully", results);
+      sendResponse(
+        res,
+        HttpStatus.OK,
+        true,
+        "Products fetched successfully",
+        results,
+      );
     } catch (err) {
-      failure(next, "Failed to fetch products", err);
+      sendResponseError(next, "Failed to fetch products", err);
     }
   }
 }

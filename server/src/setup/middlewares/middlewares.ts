@@ -7,9 +7,9 @@ import {
   getExploreRouter,
   getResetRouter,
 } from "@/api";
-import { FILE_PATHS } from "@/constants";
+import { FILE_PATHS, HttpStatus } from "@/constants";
 import type { DefinedModelsMap } from "@/setup/";
-import { addAppRequestLog, failure, isDevelopment } from "@/utils";
+import { addAppRequestLog, sendResponseError, isDevelopment } from "@/utils";
 import cors from "cors";
 import express, {
   type RequestHandler,
@@ -67,7 +67,7 @@ const uiProductionMiddleware: RequestHandler = (_req, res, next) => {
     // transfer failed
     if (err && !res.headersSent) {
       const isFileMissing = "code" in err && err.code === "ENOENT"; // ErrorNoENTry
-      failure(
+      sendResponseError(
         next,
         isFileMissing ? "Webpage not available" : "Something went wrong",
         err,
@@ -81,7 +81,10 @@ const uiDevelopmentMiddleware: RequestHandler = (req, res, next) => {
     // devUrl will handle all future requests
     res.redirect(uiDevUrl + req.originalUrl);
   } else {
-    failure(next, `"${uiDevUrlEnvKey}" is missing in environment file.`);
+    sendResponseError(
+      next,
+      `"${uiDevUrlEnvKey}" is missing in environment file.`,
+    );
   }
 };
 
@@ -101,7 +104,9 @@ const notFoundMiddleware: RequestHandler = (_req, res, _next) => {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const errorMiddleware: ErrorRequestHandler = (err, req, res, next) => {
   res.locals.err = err;
-  res.status(500).send(err?.clientMessage || "Something went wrong");
+  res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(
+    err?.clientMessage || "Something went wrong",
+  );
 };
 
 //

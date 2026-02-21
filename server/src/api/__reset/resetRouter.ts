@@ -1,5 +1,6 @@
+import { HttpStatus } from "@/constants";
 import type { DefinedModelsMap } from "@/setup";
-import { failure, resetDatabase, success } from "@/utils";
+import { sendResponseError, resetDatabase, sendResponse } from "@/utils";
 import { Router, Request, Response, NextFunction } from "express";
 
 export function getResetRouter(modelsMap: DefinedModelsMap) {
@@ -11,9 +12,9 @@ export function getResetRouter(modelsMap: DefinedModelsMap) {
   async function reset(_req: Request, res: Response, next: NextFunction) {
     try {
       await resetDatabase(modelsMap);
-      success(res, 200, "Database reset successfully");
+      sendResponse(res, HttpStatus.OK, true, "Database reset successfully");
     } catch (err) {
-      failure(next, "Failed to reset database", err);
+      sendResponseError(next, "Failed to reset database", err);
     }
   }
 }

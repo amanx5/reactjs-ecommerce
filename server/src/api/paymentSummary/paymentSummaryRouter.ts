@@ -1,5 +1,6 @@
+import { HttpStatus } from "@/constants";
 import type { DefinedModelsMap } from "@/setup";
-import { failure, isNumber, success } from "@/utils";
+import { sendResponseError, isNumber, sendResponse } from "@/utils";
 import express, { NextFunction, Request, Response } from "express";
 
 export function getPaymentSummaryRouter(modelsMap: DefinedModelsMap) {
@@ -59,9 +60,15 @@ export function getPaymentSummaryRouter(modelsMap: DefinedModelsMap) {
         totalCostCents,
       };
 
-      success(res, 200, "Payment summary fetched successfully", summary);
+      sendResponse(
+        res,
+        HttpStatus.OK,
+        true,
+        "Payment summary fetched successfully",
+        summary,
+      );
     } catch (error) {
-      failure(next, "Failed to fetch payment summary", error);
+      sendResponseError(next, "Failed to fetch payment summary", error);
     }
   }
 }
