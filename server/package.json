@@ -16,6 +16,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.2",
+    "fuse.js": "^7.1.0",
     "sequelize": "^6.37.7",
     "sqlite3": "^5.1.7",
     "tsconfig-paths": "^4.2.0"
