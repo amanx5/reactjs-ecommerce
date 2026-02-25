@@ -7,9 +7,23 @@ import tseslint from 'typescript-eslint';
 import { defineConfig } from 'eslint/config';
 
 export default defineConfig(
-	{ ignores: ['dist'] },
+	{
+		ignores: ['dist'],
+	},
 	js.configs.recommended,
 	...tseslint.configs.recommended,
+
+	// Configurations for all types of files
+	{
+		languageOptions: {
+			parserOptions: {
+				// Set the root directory for resolving tsconfig.json in a monorepo (required for ESLint extension)
+				tsconfigRootDir: import.meta.dirname,
+			},
+		},
+	},
+
+	// Configurations for TypeScript files
 	{
 		files: ['**/*.{ts,tsx}'],
 		languageOptions: {
@@ -45,6 +59,8 @@ export default defineConfig(
 			'react/prop-types': 'off',
 		},
 	},
+
+	// Configurations for vite config file
 	{
 		files: ['vite.config.ts'],
 		languageOptions: {
