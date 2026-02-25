@@ -155,5 +155,5 @@ export function addAppRequestLog(req: Request, res: Response) {
 
   const logElements = err ? [logMessage, err] : [logMessage];
 
-  addAppLog(logLevel, logElements, true);
+  addAppLog(logLevel, logElements, !!err);
 }

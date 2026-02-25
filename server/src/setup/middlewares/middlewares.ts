@@ -118,7 +118,6 @@ const errorMiddleware: ErrorRequestHandler = (err, req, res, next) => {
 function getApiRouter(modelsMap: DefinedModelsMap) {
   const apiRouter = express.Router();
 
-  apiRouter.use(apiPublicMiddleware);
   apiRouter.use("/cartItems", getCartItemsRouter(modelsMap));
   apiRouter.use("/deliveryOptions", getDeliveryOptionsRouter(modelsMap));
   apiRouter.use("/orders", getOrdersRouter(modelsMap));
@@ -126,6 +125,7 @@ function getApiRouter(modelsMap: DefinedModelsMap) {
   apiRouter.use("/products", getProductsRouter(modelsMap));
 
   if (isDevelopment()) {
+    apiRouter.use(apiPublicMiddleware);
     apiRouter.use("/__explore", getExploreRouter(apiRouter));
     apiRouter.use("/__reset", getResetRouter(modelsMap));
   }
