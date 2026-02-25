@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/useToast';
 export default function OrdersPage() {
 	const { setToast } = useToast();
 	const [orders, setOrders] = useState<OrderExpanded[]>([]);
+	const hasOrders = Array.isArray(orders) && orders.length > 0;
 
 	useEffect(() => {
 		refreshStateViaAPI<OrderExpanded[]>(
@@ -29,12 +30,15 @@ export default function OrdersPage() {
 			<div className='orders-page'>
 				<div className='page-title'>Your Orders</div>
 
-				<div className='orders-grid'>
-					{Array.isArray(orders) &&
-						orders.map((order) => (
+				{hasOrders ? (
+					<div className='orders-grid'>
+						{orders.map((order) => (
 							<OrderComponent key={order.id} order={order} />
 						))}
-				</div>
+					</div>
+				) : (
+					<div>No orders found</div>
+				)}
 			</div>
 		</>
 	);
