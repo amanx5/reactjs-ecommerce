@@ -2,7 +2,7 @@ import './CheckoutHeader.css';
 import { NavLink } from 'react-router';
 import LogoGreen from '../../assets/logo/logo.png'
 import MobileLogoGreen from '../../assets/logo/mobile-logo.png'
-import CheckoutLock from '../../assets/icons/Checkout-lock-icon.png'
+import CheckoutLock from '@/assets/icons/checkout-lock-icon.png'
 import { useCart } from '@/hooks/useCart';
 import { getTotalCartItems } from '@/utils';
 
