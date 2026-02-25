@@ -25,13 +25,38 @@ export async function resetDatabase(modelsMap: DefinedModelsMap) {
   const { CartItem, DeliveryOption, Order, OrderItem, Product } = modelsMap;
 
   // delete dependent tables first
-  await CartItem.destroy({ where: {}, truncate: true, force: true });
-  await OrderItem.destroy({ where: {}, truncate: true, force: true });
+  await CartItem.destroy({
+    where: {},
+    truncate: true,
+    cascade: true,
+    force: true,
+  });
+  await OrderItem.destroy({
+    where: {},
+    truncate: true,
+    cascade: true,
+    force: true,
+  });
 
   // delete independent tables
-  await DeliveryOption.destroy({ where: {}, truncate: true, force: true });
-  await Order.destroy({ where: {}, truncate: true, force: true });
-  await Product.destroy({ where: {}, truncate: true, force: true });
+  await DeliveryOption.destroy({
+    where: {},
+    truncate: true,
+    cascade: true,
+    force: true,
+  });
+  await Order.destroy({
+    where: {},
+    truncate: true,
+    cascade: true,
+    force: true,
+  });
+  await Product.destroy({
+    where: {},
+    truncate: true,
+    cascade: true,
+    force: true,
+  });
 
   // insert in independent tables
   await Product.bulkCreate(productsJson);

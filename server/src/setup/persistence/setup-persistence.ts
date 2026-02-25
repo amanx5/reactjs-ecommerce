@@ -1,6 +1,12 @@
 import { FILE_PATHS } from "@/constants/";
 import { defineModels, type DefinedModelsMap, terminateServer } from "@/setup/";
-import { addAppLog, addSqlLog, isDevelopment, LOG_LEVELS, seedStaticTables } from "@/utils/";
+import {
+  addAppLog,
+  addSqlLog,
+  isProduction,
+  LOG_LEVELS,
+  seedStaticTables,
+} from "@/utils/";
 import { Sequelize } from "sequelize";
 
 export type PersistenceInstance = Sequelize;
@@ -10,20 +16,35 @@ export type PersistenceHelpers = {
 };
 
 export async function setupPersistence(): Promise<PersistenceHelpers> {
-  const instance = new Sequelize({
-    dialect: "sqlite",
-    storage: FILE_PATHS.database,
-    logging: addSqlLog,
-    logQueryParameters: isDevelopment()
-  });
+  let instance: Sequelize | null = null;
 
   try {
+    if (isProduction()) {
+      const dbUrl = process.env.DATABASE_URL;
+      if (!dbUrl) {
+        throw new Error("DATABASE_URL is not defined");
+      }
+
+      instance = new Sequelize(dbUrl, {
+        dialect: "postgres",
+        logging: addSqlLog,
+        dialectOptions: {
+          ssl: { rejectUnauthorized: false },
+        },
+      });
+    } else {
+      instance = new Sequelize({
+        dialect: "sqlite",
+        storage: FILE_PATHS.database,
+        logging: addSqlLog,
+        logQueryParameters: true,
+      });
+    }
+
     await instance.authenticate();
     const modelsMap = defineModels(instance);
-    // TODO: use migrations using Flyway in prod, instance.sync({ force: true }) should be only used in dev.
-    // await instance.sync({ alter: true });
-
-    // seed static tables
+    // TODO: use migrations in production
+    await instance.sync({ alter: true });
     await seedStaticTables(modelsMap);
 
     return {
