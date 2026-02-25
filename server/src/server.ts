@@ -4,5 +4,5 @@ import { setupMiddlewares, setupPersistence, setupServer } from "@/setup";
 const app = express();
 const psh = await setupPersistence();
 
-setupMiddlewares(app, psh);
+await setupMiddlewares(app, psh);
 setupServer(app, psh);

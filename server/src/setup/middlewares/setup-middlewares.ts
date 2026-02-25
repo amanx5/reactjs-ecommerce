@@ -1,5 +1,3 @@
-import { isProduction } from "@/utils";
-import { type Express } from "express";
 import {
   getApiRouter,
   corsMiddleWare,
@@ -12,7 +10,11 @@ import {
   uiProductionMiddleware,
   uiDevelopmentMiddleware,
 } from "./middlewares";
+import { FILE_PATHS } from "@/constants";
 import type { PersistenceHelpers } from "@/setup/";
+import { addConsoleLog, isProduction, LOG_LEVELS } from "@/utils";
+import { type Express } from "express";
+import { mkdir } from "fs/promises";
 
 /**
  * Binds Middlewares to the express app.
@@ -25,8 +27,13 @@ import type { PersistenceHelpers } from "@/setup/";
  *
  * @see https://expressjs.com/en/guide/using-middleware.html
  */
-export function setupMiddlewares(app: Express, psh: PersistenceHelpers) {
-  app.use(loggerMiddleware);
+export async function setupMiddlewares(app: Express, psh: PersistenceHelpers) {
+  const logsFolderCreated = await createLogsFolder();
+
+  if (logsFolderCreated) {
+    app.use(loggerMiddleware);
+  }
+
   app.use(corsMiddleWare);
   app.use(jsonMiddleware);
 
@@ -50,4 +57,14 @@ export function setupMiddlewares(app: Express, psh: PersistenceHelpers) {
 
   // error handling
   app.use(errorMiddleware);
+}
+
+async function createLogsFolder() {
+  try {
+    await mkdir(FILE_PATHS.logs, { recursive: true });
+    return true;
+  } catch (err) {
+    addConsoleLog(LOG_LEVELS.ERROR, ["Error creating logs directory", err]);
+    return false;
+  }
 }
