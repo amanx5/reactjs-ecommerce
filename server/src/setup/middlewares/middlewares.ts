@@ -104,9 +104,9 @@ const notFoundMiddleware: RequestHandler = (_req, res, _next) => {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const errorMiddleware: ErrorRequestHandler = (err, req, res, next) => {
   res.locals.err = err;
-  res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(
-    err?.clientMessage || "Something went wrong",
-  );
+  res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+    message: err?.message || "Something went wrong",
+  });
 };
 
 //

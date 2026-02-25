@@ -24,18 +24,8 @@ export function sendResponseError(
   clientMessage: string,
   error?: unknown,
 ) {
-  let errorWrapper;
-
-  if (error instanceof Error) {
-    errorWrapper = error;
-    Object.assign(errorWrapper, {
-      clientMessage,
-    });
-  } else {
-    errorWrapper = {
-      clientMessage,
-      error,
-    };
-  }
-  return next(errorWrapper);
+  return next({
+    error,
+    message: clientMessage,
+  });
 }

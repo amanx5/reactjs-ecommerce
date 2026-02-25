@@ -46,18 +46,20 @@ export function getCartItemsRouter(modelsMap: DefinedModelsMap) {
     const { productId, quantity = 1, deliveryOptionId = "1" } = req.body;
 
     if (!productId) {
-      return sendResponseError(next, "Product ID is required");
+      return sendResponse(res, HttpStatus.BAD_REQUEST, false, "Product ID is required");
     }
 
     const quantityIncrement = parseInt(quantity, 10);
     const isQuantityValid =
       !isNaN(quantityIncrement) &&
-      quantityIncrement > min &&
-      quantityIncrement < max;
+      quantityIncrement >= min &&
+      quantityIncrement <= max;
 
     if (!isQuantityValid) {
-      return sendResponseError(
-        next,
+      return sendResponse(
+        res,
+        HttpStatus.BAD_REQUEST,
+        false,
         "Quantity must be a number between 1 and 10",
       );
     }
@@ -72,8 +74,10 @@ export function getCartItemsRouter(modelsMap: DefinedModelsMap) {
           currentQuantity + quantityIncrement > max
         ) {
           const available = max - currentQuantity;
-          return sendResponseError(
-            next,
+          return sendResponse(
+            res,
+            HttpStatus.BAD_REQUEST,
+            false,
             available < 1
               ? "You have already added maximum quantity of this item to the cart"
               : `You can add maximum of ${available} more items`,

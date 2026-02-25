@@ -4,11 +4,11 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "type": "tsc --noemit",
     "build": "tsup src/server.ts --format esm --out-dir dist/server",
     "dev": "tsx watch --env-file=.env.dev src/server.ts",
     "lint": "eslint .",
-    "prod": "node --env-file=.env.prod dist/server/server.js"
+    "prod": "node --env-file=.env.prod dist/server/server.js",
+    "type": "tsc --noemit"
   },
   "keywords": [],
   "author": "",
@@ -33,6 +33,5 @@
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.56.0"
-  },
-  "main": "index.js"
+  }
 }
