@@ -1,4 +1,8 @@
 import { setupApplication, setupPersistence } from "@/setup";
+import { createLogsFolder } from "./utils";
 
-const psh = await setupPersistence();
-await setupApplication(psh);
+const fileLoggingEnabled = await createLogsFolder();
+
+const psh = await setupPersistence(fileLoggingEnabled);
+
+await setupApplication(psh, fileLoggingEnabled);

@@ -1,5 +1,5 @@
 import { FILE_PATHS } from "@/constants";
-import { appendFile } from "node:fs/promises";
+import { appendFile, mkdir } from "node:fs/promises";
 import { Request, Response } from "express";
 
 export enum LOG_LEVELS {
@@ -16,6 +16,16 @@ export type Log = {
   elements: LogElements;
   time: string;
 };
+
+export async function createLogsFolder() {
+  try {
+    await mkdir(FILE_PATHS.logs, { recursive: true });
+    return true;
+  } catch (err) {
+    addConsoleLog(LOG_LEVELS.ERROR, ["Error creating logs directory", err]);
+    return false;
+  }
+}
 
 function getDateTimeStrForLogging() {
   return new Date().toLocaleString();

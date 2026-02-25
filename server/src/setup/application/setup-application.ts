@@ -9,9 +9,12 @@ import {
 } from "@/utils";
 import express from "express";
 
-export async function setupApplication(psh: PersistenceHelpers) {
+export async function setupApplication(
+  psh: PersistenceHelpers,
+  fileLoggingEnabled: boolean,
+) {
   const app = express();
-  await bindMiddlewares(app, psh);
+  await bindMiddlewares(app, psh, fileLoggingEnabled);
 
   const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
 

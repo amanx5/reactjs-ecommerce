@@ -6,6 +6,7 @@ import {
 } from "@/setup/";
 import {
   addAppLog,
+  addConsoleLog,
   addSqlLog,
   isDevelopment,
   isProduction,
@@ -20,10 +21,16 @@ export type PersistenceHelpers = {
   modelsMap: DefinedModelsMap;
 };
 
-export async function setupPersistence(): Promise<PersistenceHelpers> {
+export async function setupPersistence(
+  fileLoggingEnabled: boolean,
+): Promise<PersistenceHelpers> {
   let instance: Sequelize | null = null;
 
   try {
+    const logger = fileLoggingEnabled
+      ? addSqlLog
+      : addConsoleLog.bind(null, LOG_LEVELS.INFO);
+
     if (isProduction()) {
       const dbUrl = process.env.DATABASE_URL;
       if (!dbUrl) {
@@ -32,16 +39,16 @@ export async function setupPersistence(): Promise<PersistenceHelpers> {
 
       instance = new Sequelize(dbUrl, {
         dialect: "postgres",
-        logging: addSqlLog,
         dialectOptions: {
           ssl: { rejectUnauthorized: false },
         },
+        logging: logger,
       });
     } else {
       instance = new Sequelize({
         dialect: "sqlite",
         storage: FILE_PATHS.database,
-        logging: addSqlLog,
+        logging: logger,
         logQueryParameters: true,
       });
     }
