@@ -6,6 +6,6 @@ export async function terminateApplication(
 ): Promise<never> {
   await persistanceInstance?.close();
 
-  addAppLog(LOG_LEVELS.INFO, ["Terminating application."], true);
+  addAppLog(LOG_LEVELS.INFO, ["Terminating application."]);
   process.exit(1);
 }

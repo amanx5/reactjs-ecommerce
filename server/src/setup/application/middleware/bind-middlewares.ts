@@ -28,12 +28,8 @@ import { type Express } from "express";
 export async function bindMiddlewares(
   app: Express,
   psh: PersistenceHelpers,
-  fileLoggingEnabled: boolean,
 ) {
-  if (fileLoggingEnabled) {
-    app.use(loggerMiddleware);
-  }
-
+  app.use(loggerMiddleware);
   app.use(corsMiddleWare);
   app.use(jsonMiddleware);
 

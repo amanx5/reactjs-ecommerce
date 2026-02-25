@@ -6,7 +6,6 @@ import {
 } from "@/setup/";
 import {
   addAppLog,
-  addConsoleLog,
   addSqlLog,
   isDevelopment,
   isProduction,
@@ -21,20 +20,14 @@ export type PersistenceHelpers = {
   modelsMap: DefinedModelsMap;
 };
 
-export async function setupPersistence(
-  fileLoggingEnabled: boolean,
-): Promise<PersistenceHelpers> {
+export async function setupPersistence(): Promise<PersistenceHelpers> {
   let instance: Sequelize | null = null;
 
   try {
-    const logger = fileLoggingEnabled
-      ? addSqlLog
-      : addConsoleLog.bind(null, LOG_LEVELS.INFO);
-
     if (isProduction()) {
       const dbUrl = process.env.DATABASE_URL;
       if (!dbUrl) {
-        throw new Error("DATABASE_URL is not defined");
+        throw new Error("Environment variable `DATABASE_URL` is missing.");
       }
 
       instance = new Sequelize(dbUrl, {
@@ -42,13 +35,13 @@ export async function setupPersistence(
         dialectOptions: {
           ssl: { rejectUnauthorized: false },
         },
-        logging: logger,
+        logging: addSqlLog,
       });
     } else {
       instance = new Sequelize({
         dialect: "sqlite",
         storage: FILE_PATHS.database,
-        logging: logger,
+        logging: addSqlLog,
         logQueryParameters: true,
       });
     }
@@ -64,11 +57,10 @@ export async function setupPersistence(
       modelsMap,
     };
   } catch (err) {
-    addAppLog(
-      LOG_LEVELS.ERROR,
-      ["Error occured while setting up persistence layer.", err],
-      true,
-    );
+    addAppLog(LOG_LEVELS.ERROR, [
+      "Error occured while setting up persistence layer.",
+      err,
+    ]);
 
     return await terminateApplication(instance);
   }
