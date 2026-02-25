@@ -1,3 +1,2 @@
-export * from "./middlewares/";
+export * from "./application/";
 export * from "./persistence/";
-export * from "./server/";

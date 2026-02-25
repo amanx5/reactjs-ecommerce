@@ -1,8 +1,13 @@
 import { FILE_PATHS } from "@/constants/";
-import { defineModels, type DefinedModelsMap, terminateServer } from "@/setup/";
+import {
+  defineModels,
+  type DefinedModelsMap,
+  terminateApplication,
+} from "@/setup/";
 import {
   addAppLog,
   addSqlLog,
+  isDevelopment,
   isProduction,
   LOG_LEVELS,
   seedStaticTables,
@@ -44,7 +49,7 @@ export async function setupPersistence(): Promise<PersistenceHelpers> {
     await instance.authenticate();
     const modelsMap = defineModels(instance);
     // TODO: use migrations in production
-    await instance.sync({ alter: true });
+    await instance.sync(isDevelopment() ? { force: true } : {});
     await seedStaticTables(modelsMap);
 
     return {
@@ -58,6 +63,6 @@ export async function setupPersistence(): Promise<PersistenceHelpers> {
       true,
     );
 
-    return await terminateServer(instance);
+    return await terminateApplication(instance);
   }
 }

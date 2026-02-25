@@ -1,4 +1,5 @@
-import { terminateServer, type PersistenceHelpers } from "@/setup/";
+import { bindMiddlewares } from "./middleware/";
+import { terminateApplication, type PersistenceHelpers } from "@/setup/";
 import {
   addAppLog,
   addConsoleLog,
@@ -6,9 +7,12 @@ import {
   isDevelopment,
   LOG_LEVELS,
 } from "@/utils";
-import { type Express } from "express";
+import express from "express";
 
-export function setupServer(app: Express, psh: PersistenceHelpers) {
+export async function setupApplication(psh: PersistenceHelpers) {
+  const app = express();
+  await bindMiddlewares(app, psh);
+
   const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
 
   // Listen for HTTP requests
@@ -35,6 +39,6 @@ export function setupServer(app: Express, psh: PersistenceHelpers) {
   // callback that executes when server encounters an error
   async function onServerError(err: Error) {
     addAppLog(LOG_LEVELS.ERROR, ["Server Error", err], true);
-    terminateServer(psh.instance);
+    terminateApplication(psh.instance);
   }
 }

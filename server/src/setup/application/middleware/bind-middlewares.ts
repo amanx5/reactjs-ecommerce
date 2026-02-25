@@ -27,7 +27,7 @@ import { mkdir } from "fs/promises";
  *
  * @see https://expressjs.com/en/guide/using-middleware.html
  */
-export async function setupMiddlewares(app: Express, psh: PersistenceHelpers) {
+export async function bindMiddlewares(app: Express, psh: PersistenceHelpers) {
   const logsFolderCreated = await createLogsFolder();
 
   if (logsFolderCreated) {

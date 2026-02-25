@@ -1,8 +1,4 @@
-import express from "express";
-import { setupMiddlewares, setupPersistence, setupServer } from "@/setup";
+import { setupApplication, setupPersistence } from "@/setup";
 
-const app = express();
 const psh = await setupPersistence();
-
-await setupMiddlewares(app, psh);
-setupServer(app, psh);
+await setupApplication(psh);
