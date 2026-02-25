@@ -17,6 +17,23 @@ export type Log = {
   time: string;
 };
 
+export enum LOGS_TARGET {
+  CONSOLE = "console",
+  FILE = "file",
+  BOTH = "both",
+  NONE = "none",
+}
+
+const logsTargets = Object.values(LOGS_TARGET);
+
+const appLogsTarget = logsTargets.includes(process.env.APP_LOGS as LOGS_TARGET)
+  ? process.env.APP_LOGS
+  : LOGS_TARGET.CONSOLE;
+
+const sqlLogsTarget = logsTargets.includes(process.env.SQL_LOGS as LOGS_TARGET)
+  ? process.env.SQL_LOGS
+  : LOGS_TARGET.CONSOLE;
+
 function getDateTimeStrForLogging() {
   return new Date().toLocaleString();
 }
@@ -34,7 +51,7 @@ function prepareMetadataText(log: Log, hideLogLevel?: boolean) {
   const timeStr = "[" + time + "] ";
   const levelStr = hideLogLevel ? "" : "[" + logLevelName + "] ";
 
-  return "\n" + timeStr + levelStr;
+  return timeStr + levelStr;
 }
 
 function prepareElementsText(log: Log) {
@@ -91,11 +108,7 @@ export function addConsoleLog(level: LogLevel, ...elements: LogElements) {
   }
 }
 
-export async function addAppLog(
-  level: LogLevel,
-  elements: LogElements,
-  printConsole: boolean,
-) {
+export async function addAppLog(level: LogLevel, elements: LogElements) {
   const log: Log = {
     level,
     elements,
@@ -104,22 +117,29 @@ export async function addAppLog(
 
   const metadataText = prepareMetadataText(log);
   const elementsText = prepareElementsText(log);
+  const completeText = metadataText + elementsText;
 
-  if (printConsole) {
-    addConsoleLog(
-      level,
-      metadataText + elements[0] + "\n",
-      ...elements.slice(1),
-    );
+  // logging in console
+  if (
+    appLogsTarget === LOGS_TARGET.BOTH ||
+    appLogsTarget === LOGS_TARGET.CONSOLE
+  ) {
+    addConsoleLog(level, completeText);
   }
 
-  try {
-    await appendFile(FILE_PATHS.logsApp, metadataText + elementsText);
-  } catch (err) {
-    addConsoleLog(LOG_LEVELS.ERROR, [
-      "Error occured in updating `app.log` file.",
-      err,
-    ]);
+  // logging in file
+  if (
+    appLogsTarget === LOGS_TARGET.BOTH ||
+    appLogsTarget === LOGS_TARGET.FILE
+  ) {
+    try {
+      await appendFile(FILE_PATHS.logsApp, "\n" + completeText);
+    } catch (err) {
+      addConsoleLog(LOG_LEVELS.ERROR, [
+        `Error occured in updating ${FILE_PATHS.logsApp} file.`,
+        err,
+      ]);
+    }
   }
 }
 
@@ -131,14 +151,29 @@ export async function addSqlLog(sql: string) {
   };
   const metadataText = prepareMetadataText(log, true);
   const elementsText = prepareElementsText(log);
+  const completeText = metadataText + elementsText;
 
-  try {
-    await appendFile(FILE_PATHS.logsSql, metadataText + elementsText);
-  } catch (err) {
-    addConsoleLog(LOG_LEVELS.ERROR, [
-      "Error occured in updating `sql.log` file.",
-      err,
-    ]);
+  // logging in console
+  if (
+    sqlLogsTarget === LOGS_TARGET.BOTH ||
+    sqlLogsTarget === LOGS_TARGET.CONSOLE
+  ) {
+    addConsoleLog(LOG_LEVELS.INFO, completeText);
+  }
+
+  // logging in file
+  if (
+    sqlLogsTarget === LOGS_TARGET.BOTH ||
+    sqlLogsTarget === LOGS_TARGET.FILE
+  ) {
+    try {
+      await appendFile(FILE_PATHS.logsSql, "\n" + completeText);
+    } catch (err) {
+      addConsoleLog(LOG_LEVELS.ERROR, [
+        `Error occured in updating ${FILE_PATHS.logsSql} file.`,
+        err,
+      ]);
+    }
   }
 }
 
@@ -155,5 +190,5 @@ export function addAppRequestLog(req: Request, res: Response) {
 
   const logElements = err ? [logMessage, err] : [logMessage];
 
-  addAppLog(logLevel, logElements, !!err);
+  addAppLog(logLevel, logElements);
 }

@@ -27,15 +27,15 @@ export async function setupPersistence(): Promise<PersistenceHelpers> {
     if (isProduction()) {
       const dbUrl = process.env.DATABASE_URL;
       if (!dbUrl) {
-        throw new Error("DATABASE_URL is not defined");
+        throw new Error("Environment variable `DATABASE_URL` is missing.");
       }
 
       instance = new Sequelize(dbUrl, {
         dialect: "postgres",
-        logging: addSqlLog,
         dialectOptions: {
           ssl: { rejectUnauthorized: false },
         },
+        logging: addSqlLog,
       });
     } else {
       instance = new Sequelize({
@@ -57,11 +57,10 @@ export async function setupPersistence(): Promise<PersistenceHelpers> {
       modelsMap,
     };
   } catch (err) {
-    addAppLog(
-      LOG_LEVELS.ERROR,
-      ["Error occured while setting up persistence layer.", err],
-      true,
-    );
+    addAppLog(LOG_LEVELS.ERROR, [
+      "Error occured while setting up persistence layer.",
+      err,
+    ]);
 
     return await terminateApplication(instance);
   }
