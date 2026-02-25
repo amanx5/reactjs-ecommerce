@@ -2,7 +2,7 @@
 	"name": "ecommerce",
 	"private": true,
 	"scripts": {
-		"build": "pnpm -r --parallel run build",
+		"build": "pnpm -F ui build && pnpm -F server build",
 		"dev": "pnpm -r --parallel run dev",
 		"lint": "pnpm -r --parallel run lint",
 		"prod": "pnpm -r --parallel run build && pnpm -F server prod",
