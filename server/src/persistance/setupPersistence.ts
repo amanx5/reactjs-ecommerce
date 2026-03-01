@@ -1,25 +1,18 @@
+import { seedDatabase } from "@/persistance/utils/";
+import { terminateApplication } from "@/application/utils";
 import { FILE_PATHS } from "@/constants/";
-import {
-  defineModels,
-  type DefinedModelsMap,
-  terminateApplication,
-} from "@/setup/";
 import {
   addAppLog,
   addSqlLog,
   isDevelopment,
   isProduction,
-  seedStaticTables,
 } from "@/utils/";
 import { Sequelize } from "sequelize";
+import { initAllModels } from "@/persistance/utils/initAllModels";
 
 export type PersistenceInstance = Sequelize;
-export type PersistenceHelpers = {
-  instance: PersistenceInstance;
-  modelsMap: DefinedModelsMap;
-};
 
-export async function setupPersistence(): Promise<PersistenceHelpers> {
+export async function setupPersistence(): Promise<PersistenceInstance> {
   let instance: Sequelize | null = null;
 
   try {
@@ -46,17 +39,15 @@ export async function setupPersistence(): Promise<PersistenceHelpers> {
     }
 
     await instance.authenticate();
-    const modelsMap = defineModels(instance);
+    initAllModels(instance);
+
     // TODO: use migrations in production
     await instance.sync({
       force: isDevelopment(),
     });
-    await seedStaticTables(modelsMap);
+    await seedDatabase();
 
-    return {
-      instance,
-      modelsMap,
-    };
+    return instance;
   } catch (err) {
     addAppLog("error", "Failed to set up persistence layer.", err);
 
