@@ -94,7 +94,7 @@ export async function addAppLog(level: LogLevel, ...elements: LogElements) {
       try {
         return isError(el) ? errorToLine(el) : JSON.stringify(el, null, 2);
       } catch (err) {
-        return "Failed to convert log element to line. Log element: " + el;
+        return `Failed to convert log element to line. Log element: ${el}. Error: ${err}`;
       }
 
       function errorToLine(err: Error): string {

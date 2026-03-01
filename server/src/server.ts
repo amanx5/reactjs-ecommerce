@@ -1,5 +1,6 @@
-import { setupApplication, setupPersistence } from "@/setup";
+import { setupPersistence } from "@/persistance";
+import { setupApplication } from "@/application";
 
-const psh = await setupPersistence();
+const persistanceInstance = await setupPersistence();
 
-await setupApplication(psh);
+await setupApplication(persistanceInstance);

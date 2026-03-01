@@ -39,9 +39,9 @@ export default defineConfig(
     },
   },
 
-  // Configurations for JavaScript files under api/public
+  // Configurations for JavaScript files under src/application/routers/public
   {
-    files: ["src/api/public/**/*.js"],
+    files: ["src/application/routers/public/**/*.js"],
     languageOptions: {
       globals: {
         ...globals.browser,

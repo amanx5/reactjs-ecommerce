@@ -18,7 +18,7 @@ export default function CartItem({ cartItem }: { cartItem: CartItemExpanded }) {
 
 	useEffect(() => {
 		refreshStateViaAPI(
-			'/api/deliveryOptions?expand=estimatedDeliveryTime',
+			'/api/deliveryOptions?expand=estimatedDeliveryTimeMs',
 			setDeliveryOptions,
 			{
 				setToast,
