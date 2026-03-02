@@ -4,8 +4,6 @@ import {
   ordersRouter,
   paymentSummaryRouter,
   productsRouter,
-  getExploreRouter,
-  resetRouter,
 } from "@/application/routers";
 import { sendResponseError } from "@/application/utils";
 import { FILE_PATHS, HttpStatus } from "@/constants";
@@ -41,7 +39,6 @@ const corsMiddleWare = cors({
 // - `express.static` serves static files & doesn't propagate when request URL matches with `root` directory argument
 // ******************************************************************************************************************
 const jsonMiddleware = express.json();
-const apiPublicMiddleware = express.static(FILE_PATHS.apiPublic);
 const imagesMiddleware = express.static(FILE_PATHS.images);
 const uiBuildMiddleware = express.static(FILE_PATHS.uiBuild);
 
@@ -128,11 +125,7 @@ function getApiRouter() {
   apiRouter.use("/paymentSummary", paymentSummaryRouter);
   apiRouter.use("/products", productsRouter);
 
-  if (isDevelopment()) {
-    apiRouter.use(apiPublicMiddleware);
-    apiRouter.use("/__reset", resetRouter);
-    apiRouter.use("/__explore", getExploreRouter(apiRouter));
-  }
+
 
   return apiRouter;
 }
