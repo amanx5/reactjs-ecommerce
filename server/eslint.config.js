@@ -38,14 +38,4 @@ export default defineConfig(
       "@typescript-eslint/no-explicit-any": "warn",
     },
   },
-
-  // Configurations for JavaScript files under src/application/routers/public
-  {
-    files: ["src/application/routers/public/**/*.js"],
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-      },
-    },
-  },
 );
