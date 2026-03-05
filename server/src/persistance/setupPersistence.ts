@@ -41,7 +41,7 @@ export async function setupPersistence(): Promise<PersistenceInstance> {
     initAllModels(instance);
 
     // TODO: use migrations in production
-    await instance.sync();
+    await instance.sync({ alter: true });
     await seedDatabase();
 
     return instance;
