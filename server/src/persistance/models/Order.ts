@@ -1,4 +1,5 @@
 import type { User } from "@/persistance/models/";
+import { isString } from "@/utils";
 import {
   CreationOptional,
   DataTypes,
@@ -31,7 +32,14 @@ export class Order extends Model<
           primaryKey: true,
           defaultValue: DataTypes.UUIDV4,
         },
-        orderTimeMs: { type: DataTypes.BIGINT, allowNull: false },
+        orderTimeMs: {
+          type: DataTypes.BIGINT,
+          allowNull: false,
+          get() {
+            const value = this.getDataValue("orderTimeMs");
+            return isString(value) ? Number(value) : value;
+          },
+        },
         totalCostCents: { type: DataTypes.INTEGER, allowNull: false },
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE,
