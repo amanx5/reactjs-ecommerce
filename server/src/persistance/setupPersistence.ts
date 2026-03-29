@@ -1,5 +1,4 @@
 import { terminateApplication } from "@/application/utils";
-import { FILE_PATHS } from "@/constants/";
 import { seedDatabase, initModelsAndAssociations } from "@/persistance/utils/";
 import { addAppLog, addSqlLog, isDevelopment } from "@/utils/";
 import { Sequelize } from "sequelize";

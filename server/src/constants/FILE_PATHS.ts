@@ -4,6 +4,7 @@ export const FILE_PATHS = {
   images: absolutePathExperimental("~/images/"),
   logs: {
     app: absolutePathExperimental("~/logs/app.log"),
+    req: absolutePathExperimental("~/logs/req.log"),
     sql: absolutePathExperimental("~/logs/sql.log"),
   },
   uiBuild: absolutePathExperimental("~/dist/ui/"),

@@ -7,7 +7,7 @@ import { DatabaseError, ValidationError } from "sequelize";
 export type LogLevel = "info" | "warn" | "error";
 export type LogElements = unknown[];
 export type LogTimestamp = number;
-export type LogType = "app" | "sql";
+export type LogType = "app" | "req" | "sql";
 export type LogTarget = "console" | "file" | "both" | "none";
 
 export type Log = {
@@ -20,15 +20,17 @@ export const LOGS_TARGET_ALL: LogTarget[] = ["console", "file", "both", "none"];
 
 export const LOGS_TARGET_DEFAULTS: Record<LogType, LogTarget> = {
   app: "console",
+  req: "none",
   sql: "none",
 };
 
 export const LOGS_TARGET_ENV_VARS: Record<LogType, string> = {
   app: "APP_LOGS",
+  req: "REQ_LOGS",
   sql: "SQL_LOGS",
 };
 
-function resolveTargets(type: LogType) {
+function resolveLogTargets(type: LogType) {
   const targetSetInEnv = process.env[LOGS_TARGET_ENV_VARS[type]];
   const target = isValidLogsTarget(targetSetInEnv)
     ? targetSetInEnv
@@ -44,7 +46,7 @@ function resolveTargets(type: LogType) {
   }
 }
 
-export function logConsole(level: LogLevel, ...elements: LogElements) {
+function logConsole(level: LogLevel, ...elements: LogElements) {
   switch (level) {
     case "error":
       console.error(...elements);
@@ -58,7 +60,7 @@ export function logConsole(level: LogLevel, ...elements: LogElements) {
   }
 }
 
-export async function logFile(type: LogType, text: string) {
+async function logFile(type: LogType, text: string) {
   const fileName = FILE_PATHS.logs[type];
 
   try {
@@ -69,68 +71,73 @@ export async function logFile(type: LogType, text: string) {
 }
 
 export async function addAppLog(level: LogLevel, ...elements: LogElements) {
-  const time = new Date().toLocaleString();
-  const lines = getLines();
+  const lines = convertLogElementsToLines(level, elements);
 
-  const { inConsole, inFile } = resolveTargets("app");
+  await addLogsToTargets("app", level, lines);
+}
+
+async function addLogsToTargets(type: LogType, level: LogLevel, lines: string) {
+  const { inConsole, inFile } = resolveLogTargets(type);
 
   if (inConsole) {
     logConsole(level, lines);
   }
 
   if (inFile) {
-    await logFile("app", lines);
+    await logFile(type, lines);
+  }
+}
+
+function convertLogElementsToLines(level: LogLevel, elements: LogElements) {
+  const time = new Date().toLocaleString();
+
+  let lines = `[${time}] [${level}] ${elements[0]}`;
+
+  if (elements.length > 1) {
+    lines += "\n" + elements.slice(1).map(elementToLine).join("\n");
   }
 
-  function getLines() {
-    let lines = `[${time}] [${level}] ${elements[0]}`;
+  return lines;
 
-    if (elements.length > 1) {
-      lines += "\n" + elements.slice(1).map(elementToLine).join("\n");
+  function elementToLine(el: unknown) {
+    try {
+      return isError(el) ? errorToLine(el) : JSON.stringify(el, null, 2);
+    } catch (err) {
+      return `Failed to convert log element to line. Log element: ${el}. Error: ${err}`;
     }
 
-    return lines;
+    function errorToLine(err: Error): string {
+      const { name, message, stack, cause } = err;
 
-    function elementToLine(el: unknown) {
-      try {
-        return isError(el) ? errorToLine(el) : JSON.stringify(el, null, 2);
-      } catch (err) {
-        return `Failed to convert log element to line. Log element: ${el}. Error: ${err}`;
+      let errorInfoText = name + ": " + message;
+      const errorCauseText = isError(cause)
+        ? "\nCause: " + errorToLine(cause)
+        : "";
+
+      if (stack) {
+        errorInfoText = stack.includes(errorInfoText)
+          ? stack
+          : errorInfoText + "\n" + stack;
       }
 
-      function errorToLine(err: Error): string {
-        const { name, message, stack, cause } = err;
-
-        let errorInfoText = name + ": " + message;
-        const errorCauseText = isError(cause)
-          ? "\nCause: " + errorToLine(cause)
-          : "";
-
-        if (stack) {
-          errorInfoText = stack.includes(errorInfoText)
-            ? stack
-            : errorInfoText + "\n" + stack;
+      let errorOtherInfo = "";
+      const isValidationError = err instanceof ValidationError;
+      const isDatabaseError = err instanceof DatabaseError;
+      if (isValidationError || isDatabaseError) {
+        if ("original" in err) {
+          errorOtherInfo += "\nOriginal error: " + err.original;
         }
 
-        let errorOtherInfo = "";
-        const isValidationError = err instanceof ValidationError;
-        const isDatabaseError = err instanceof DatabaseError;
-        if (isValidationError || isDatabaseError) {
-          if ("original" in err) {
-            errorOtherInfo += "\nOriginal error: " + err.original;
-          }
-
-          if (isValidationError && err.errors.length) {
-            errorOtherInfo +=
-              "\nValidation errors: " +
-              err.errors
-                .map((error) => `\n${JSON.stringify(error, null, 2)}`)
-                .join(", ");
-          }
+        if (isValidationError && err.errors.length) {
+          errorOtherInfo +=
+            "\nValidation errors: " +
+            err.errors
+              .map((error) => `\n${JSON.stringify(error, null, 2)}`)
+              .join(", ");
         }
-
-        return errorInfoText + errorOtherInfo + errorCauseText;
       }
+
+      return errorInfoText + errorOtherInfo + errorCauseText;
     }
   }
 }
@@ -148,20 +155,14 @@ export async function addRequestLog(req: Request, res: Response) {
   const level = error ? "error" : "info";
   const elements = error ? [firstLine, error] : [firstLine];
 
-  await addAppLog(level, ...elements);
+  const lines = convertLogElementsToLines(level, elements);
+
+  await addLogsToTargets("req", level, lines);
 }
 
 export async function addSqlLog(sql: string) {
   const time = new Date().toLocaleString();
   const line = `[${time}] ${sql}`;
 
-  const { inConsole, inFile } = resolveTargets("sql");
-
-  if (inConsole) {
-    logConsole("info", line);
-  }
-
-  if (inFile) {
-    await logFile("sql", line);
-  }
+  await addLogsToTargets("sql", "info", line);
 }

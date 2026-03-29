@@ -1,7 +1,7 @@
 import { bindMiddlewares } from "./middleware";
 import { terminateApplication } from "@/application/utils";
 import type { PersistenceInstance } from "@/persistance";
-import { addAppLog, isDevelopment, logConsole } from "@/utils";
+import { addAppLog, isDevelopment } from "@/utils";
 import express from "express";
 
 export async function setupApplication(
@@ -20,16 +20,12 @@ export async function setupApplication(
 
   // callback that executes when server starts listening
   async function onServerListening() {
+    let msg = `Server started on port ${port}`;
     if (isDevelopment()) {
-      logConsole(
-        "info",
-        `\n➜  Server: http://localhost:${port}`,
-        "\n➜  press enter to restart",
-        "\n",
-      );
+      msg += `\n➜  Server: http://localhost:${port}`;
     }
 
-    await addAppLog("info", `Server started on port ${port}`);
+    await addAppLog("info", msg);
   }
 
   // callback that executes when server encounters an error
