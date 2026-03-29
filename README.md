@@ -4,7 +4,6 @@ This project is a simple **e-commerce platform** originally built during the [Su
 
 - Fully typed using TypeScript (frontend & backend).
 - Structured as a pnpm monorepo with separated `server/` and `ui/` packages.
-- Deployed publicly on Render: https://ecommerce-pwwi.onrender.com/
 
 The video series is available on YouTube:
 
@@ -19,7 +18,7 @@ The workspace consists of two main packages:
 
 Both packages share common tooling and are managed with `pnpm` in a monorepo setup.
 
-## Getting Started
+## Getting Started (Development)
 
 Follow these steps to run the application locally:
 
@@ -31,7 +30,21 @@ Follow these steps to run the application locally:
    ```bash
    pnpm dev
    ```
-3. Navigate to `http://localhost:5173` (UI) and use the API at `http://localhost:3000`.
+3. Create `.env.development` file in `ui/` folder. Refer [ui/.env.example](ui/.env.example) for more details on ui env variables.
+4. Create `.env.dev` file in `server/` folder. Refer [server/.env.example](server/.env.example) for more details on server env variables.
+5. Navigate to `http://localhost:5173` to access the UI.
+
+
+## Deployment (Production)
+
+To deploy the application on Render/Railway, follow these steps:
+
+1. Create a new API Service.
+2. Create a new DB service.
+3. Set the build command to `pnpm build` (root package).
+4. Set the start command to `pnpm start` (root package).
+5. Set the environment variables. Refer [server/.env.example](server/.env.example) to know more about the environment variables.
+6. Deploy the application.
 
 ## License & Credits
 
