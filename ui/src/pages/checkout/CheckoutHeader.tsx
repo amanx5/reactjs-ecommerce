@@ -20,7 +20,7 @@ export default function CheckoutHeader() {
 							display: 'flex',
 							alignItems: 'center',
 							gap: '8px',
-							color: 'rgb(8, 79, 45)',
+							color: 'var(--header-bg)',
 							textDecoration: 'none',
 						}}
 					>

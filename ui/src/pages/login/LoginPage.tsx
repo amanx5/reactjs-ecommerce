@@ -1,7 +1,7 @@
 import './LoginPage.css';
 import { useState, FormEvent } from 'react';
 import { NavLink, useNavigate } from 'react-router';
-import Header from '@/components/Header';
+import { MinimalHeader } from '@/components/MinimalHeader';
 import { apiRequest } from '@/utils';
 import { useUser } from '@/hooks/useUser';
 import type { User } from '@/types';
@@ -34,7 +34,7 @@ export default function LoginPage() {
 		<>
 			<link rel='icon' type='image/png' href='favicon/login.png' />
 			<title>Login - Shop</title>
-			<Header />
+			<MinimalHeader/>
 			<div className='login-page'>
 				<form className='login-form' onSubmit={onSubmit}>
 					<h2>Login</h2>

@@ -8,13 +8,21 @@ import { AccountMenu } from "./header/AccountMenu";
 import { useCart, useUser } from "@/hooks/";
 import { NavLink } from "react-router";
 
-export default function Header() {
+export default function Header({
+  className = "",
+  showSearch = true,
+  showMenu = true,
+}: {
+  className?: string;
+  showSearch?: boolean;
+  showMenu?: boolean;
+}) {
   const { cart } = useCart();
   const { user } = useUser();
   const totalCartItems = getTotalCartItems(cart);
 
   return (
-    <div className="header">
+    <div className={"header " + className}>
       <div className="left-section">
         <NavLink
           to="/"
@@ -42,28 +50,32 @@ export default function Header() {
         </NavLink>
       </div>
 
-      <div className="middle-section">
-        <SearchBar />
-      </div>
+      {showSearch && (
+        <div className="middle-section">
+          <SearchBar />
+        </div>
+      )}
 
-      <div className="right-section">
-        {user ? (
-          <>
-            <AccountMenu user={user} />
+      {showMenu && (
+        <div className="right-section">
+          {user ? (
+            <>
+              <AccountMenu user={user} />
 
-            {/* Cart  */}
-            <NavLink className="cart-link header-link" to="/checkout">
-              <img className="cart-icon" src={CartIcon} />
-              <div className="cart-quantity">{totalCartItems}</div>
-              <div className="cart-text">Cart</div>
+              {/* Cart  */}
+              <NavLink className="cart-link header-link" to="/checkout">
+                <img className="cart-icon" src={CartIcon} />
+                <div className="cart-quantity">{totalCartItems}</div>
+                <div className="cart-text">Cart</div>
+              </NavLink>
+            </>
+          ) : (
+            <NavLink className="nav-link header-link" to="/login">
+              <span className="nav-link-text">Login</span>
             </NavLink>
-          </>
-        ) : (
-          <NavLink className="nav-link header-link" to="/login">
-            <span className="nav-link-text">Login</span>
-          </NavLink>
-        )}
-      </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

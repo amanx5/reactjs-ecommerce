@@ -1,7 +1,7 @@
 import './RegisterPage.css';
 import { useState, FormEvent } from 'react';
 import { NavLink, useNavigate } from 'react-router';
-import Header from '@/components/Header';
+import { MinimalHeader } from '@/components/MinimalHeader';
 import { apiRequest } from '@/utils';
 import { useUser } from '@/hooks/useUser';
 import type { User } from '@/types';
@@ -35,7 +35,7 @@ export default function RegisterPage() {
 		<>
 			<link rel='icon' type='image/png' href='favicon/register.png' />
 			<title>Register - Shop</title>
-			<Header />
+			<MinimalHeader/>
 			<div className='register-page'>
 				<form className='register-form' onSubmit={onSubmit}>
 					<h2>Create account</h2>
